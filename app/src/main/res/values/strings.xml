@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ChocolateApp</string>
+    <string name="chocolate">Шоколад</string>
+    <string name="sets">Наборы</string>
+    <string name="forms">Формы</string>
+    <string name="order">Заказ</string>
 </resources>
