@@ -1,19 +1,46 @@
 package com.example.chocolateapp.ui
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.chocolateapp.R
+import com.example.chocolateapp.data.Datasource
+import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 
 @Composable
-fun ChocolateTastesScreen (title: String) {
-    Text(text = title)
+fun ChocolateTastesScreen (
+    chocolates: List<Chocolate>,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn (
+        contentPadding = contentPadding,
+        modifier = modifier
+    ){
+        items (chocolates) {
+            val padding_small = dimensionResource(id = R.dimen.padding_small)
+            ChocolateCard(
+                chocolate = it,
+                modifier = Modifier.padding(padding_small)
+            )
+        }
+    }
 }
 
 @Preview
 @Composable
 fun ChocolateTastesScreenPreview () {
     ChocolateAppTheme {
-        ChocolateTastesScreen(title = "Вкусы шоколада")
+        ChocolateTastesScreen(
+            Datasource.tastes,
+            contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small))
+        )
     }
 }

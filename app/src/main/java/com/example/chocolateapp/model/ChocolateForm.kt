@@ -6,5 +6,8 @@ import kotlin.math.roundToInt
 data class ChocolateForm (
     val chocolate: Chocolate,
     val form: Form,
-    val price: Int = (chocolate.price * form.weight / 100).roundToInt()
+    override val imageId: Int = form.imageId,
+    override val title: String = form.title,
+    override val price: Int = (chocolate.price * form.weight / 100),
+    override val weight: Int = form.weight
 ) : Orderable

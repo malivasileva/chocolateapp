@@ -70,4 +70,18 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material:material:1.6.8")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.8")
+
+    // Kotlin
+//    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+//    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+
+    // Feature module Support
+//    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
+
+    // Testing Navigation
+//    androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
+
+    // Jetpack Compose Integration
+//    implementation("androidx.navigation:navigation-compose:$nav_version")
+
 }

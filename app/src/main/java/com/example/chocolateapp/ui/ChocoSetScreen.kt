@@ -10,12 +10,12 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
-import com.example.chocolateapp.model.Form
+import com.example.chocolateapp.model.ChocoSet
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 
 @Composable
-fun FormsScreen (
-    forms: List<Form>,
+fun ChocoSetScreen (
+    chocoSets: List<ChocoSet>,
     contentPadding: PaddingValues,
     onButtonClicked: () -> Unit
 ) {
@@ -26,22 +26,25 @@ fun FormsScreen (
         horizontalArrangement = Arrangement.spacedBy(paddingSmall),
         contentPadding = contentPadding
     ) {
-        items(forms) {
-            FormCard (
-                form = it,
+        items(chocoSets) {
+            SetCard (
+                chocoSet = it,
                 onButtonClicked = { onButtonClicked() }
             )
         }
     }
 }
 
+
+
+
 @Preview
 @Composable
-fun FormsScreenPreview () {
+fun SetScreenPreview () {
     ChocolateAppTheme {
-        FormsScreen(
-            forms = Datasource.forms,
-            PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+        ChocoSetScreen(
+            chocoSets = Datasource.chocoSets,
+            contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
             onButtonClicked = {}
         )
     }
