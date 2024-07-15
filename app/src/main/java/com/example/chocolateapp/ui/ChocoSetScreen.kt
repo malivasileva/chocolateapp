@@ -11,13 +11,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.model.ChocoSet
+import com.example.chocolateapp.model.Orderable
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 
 @Composable
 fun ChocoSetScreen (
     chocoSets: List<ChocoSet>,
     contentPadding: PaddingValues,
-    onButtonClicked: () -> Unit
+    onButtonClicked: (Orderable) -> Unit
 ) {
     val paddingSmall = dimensionResource(id = R.dimen.padding_small)
     LazyVerticalStaggeredGrid (
@@ -29,7 +30,7 @@ fun ChocoSetScreen (
         items(chocoSets) {
             SetCard (
                 chocoSet = it,
-                onButtonClicked = { onButtonClicked() }
+                onButtonClicked = { onButtonClicked(it) }
             )
         }
     }

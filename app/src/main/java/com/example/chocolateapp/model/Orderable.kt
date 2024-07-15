@@ -1,10 +1,9 @@
 package com.example.chocolateapp.model
 
-import androidx.annotation.DrawableRes
-
 interface Orderable {
     val title: String
-    val price: Int
+    var _price: Int
     val weight: Int
     val imageId: Int
+//    var amount: Int = 1
 }

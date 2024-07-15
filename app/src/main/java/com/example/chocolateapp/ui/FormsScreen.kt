@@ -10,6 +10,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
+import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.model.Form
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 
@@ -17,7 +18,7 @@ import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 fun FormsScreen (
     forms: List<Form>,
     contentPadding: PaddingValues,
-    onButtonClicked: () -> Unit
+    onButtonClicked: (ChocolateForm) -> Unit
 ) {
     val paddingSmall = dimensionResource(id = R.dimen.padding_small)
     LazyVerticalStaggeredGrid (
@@ -29,7 +30,7 @@ fun FormsScreen (
         items(forms) {
             FormCard (
                 form = it,
-                onButtonClicked = { onButtonClicked() }
+                onButtonClicked = { onButtonClicked(ChocolateForm(form = it, _chocolate = null)) }
             )
         }
     }

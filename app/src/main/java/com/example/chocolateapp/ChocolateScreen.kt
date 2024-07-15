@@ -1,19 +1,14 @@
 package com.example.chocolateapp
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -26,9 +21,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
@@ -44,12 +44,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.chocolateapp.data.Datasource
+import com.example.chocolateapp.model.ChocoSet
+import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
-import com.example.chocolateapp.ui.ChocolateTastesScreen
+import com.example.chocolateapp.model.Orderable
 import com.example.chocolateapp.ui.FormsScreen
 import com.example.chocolateapp.ui.OrderScreen
 import com.example.chocolateapp.ui.OrderViewModel
 import com.example.chocolateapp.ui.ChocoSetScreen
+import com.example.chocolateapp.ui.TasteBottomSheet
 
 
 sealed class ChocolateScreen (
@@ -57,7 +60,7 @@ sealed class ChocolateScreen (
     @StringRes val resourceId: Int,
     @DrawableRes val iconId: Int
 ) {
-//    object Taste: ChocolateScreen("taste", R.string.chocolate, R.drawable.ic_chocolate)
+    //    object Taste: ChocolateScreen("taste", R.string.chocolate, R.drawable.ic_chocolate)
     object Set: ChocolateScreen("sets",R.string.sets, R.drawable.ic_set)
     object Forms: ChocolateScreen("forms",R.string.forms, R.drawable.ic_chocolate)
     object Order: ChocolateScreen("order",R.string.order, R.drawable.ic_cart)
@@ -88,22 +91,10 @@ fun ChocolateBottomNavBar(
                 selected = selected,
                 onClick = {
                     navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        /*anim {
-                            enter = 0
-                            exit = 0
-                            popEnter = 0
-                            popExit = 0
-                        }*/
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
                         launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
                         restoreState = true
 
                     }
@@ -130,7 +121,7 @@ fun ChocolateBottomNavBar(
 fun ChocolateTopBar () {
     CenterAlignedTopAppBar(
         title = {
-        Text(text = "Choco38", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Choco38", style = MaterialTheme.typography.headlineMedium)
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -138,14 +129,26 @@ fun ChocolateTopBar () {
         ))
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChocolateApp (
     viewModel: OrderViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
-    ) {
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentScreen = currentDestination?.route
+
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var selectedItem by remember { mutableStateOf<Orderable?>(null) }
+    var selectedChocolate by remember { mutableStateOf<Chocolate?>(null)}
+
+    var showEditBottomSheet by remember { mutableStateOf(false) }
+    var selectedEditItem by remember { mutableStateOf<ChocolateForm?>(null) }
+    var selectedEditTaste by remember { mutableStateOf<Chocolate?>(null)}
+
     Scaffold (
         topBar = {
             ChocolateTopBar()
@@ -170,36 +173,112 @@ fun ChocolateApp (
             popExitTransition = { fadeOut(tween(300)) },
             modifier = Modifier.padding(paddingValues)
         ) {
-            /*composable(route = ChocolateScreen.Taste.route) {
-                ChocolateTastesScreen(
-                    chocolates = Datasource.tastes,
-                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small))
-                )
-            }*/
-            composable(route = ChocolateScreen.Set.route) {
-                ChocoSetScreen(
-                    chocoSets = Datasource.chocoSets,
-                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
-                    onButtonClicked = {} //todo
-                )
-            }
             composable(route = ChocolateScreen.Forms.route) {
                 FormsScreen(
                     forms = Datasource.forms,
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
-                    onButtonClicked = {} //todo
+                    onButtonClicked = { chocolateForm ->
+                        showBottomSheet = true
+                        selectedItem = chocolateForm
+                    } //todo
+                )
+            }
+            composable(route = ChocolateScreen.Set.route) {
+                ChocoSetScreen(
+                    chocoSets = Datasource.chocoSets,
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                    onButtonClicked = { chocolateSet ->
+                        showBottomSheet = true
+                        selectedItem = chocolateSet
+                    } //todo
                 )
             }
             composable(route = ChocolateScreen.Order.route) {
                 OrderScreen(
                     title = stringResource(id = ChocolateScreen.Order.resourceId),
-                    items = listOf(
-                        Datasource.chocoSets[0],
-                        ChocolateForm(chocolate = Datasource.tastes[0], form = Datasource.forms[2]),
-                        ChocolateForm(chocolate = Datasource.tastes[0], form = Datasource.forms[1])
-                    )
+                    items = uiState.items,
+                    onFormChipClicked = { chocolate, item ->
+                        selectedEditItem = item
+                        selectedEditTaste = chocolate
+                        showEditBottomSheet = true
+                    },
+                    onDeleteButtonClicked = { item: Orderable ->
+                        viewModel.deleteItem(item)
+                    },
+                    onDeleteSubButtonClicked = { item: ChocoSet, form: ChocolateForm ->
+                        viewModel.deleteSubItem(item, form)
+                    }
+
                 )
             }
+        }
+        if (showBottomSheet) {
+            /*if (selectedItem is ChocolateForm) {
+                selectedChocolate[selectedItem as ChocolateForm] = (selectedItem as ChocolateForm).chocolate
+//                selectedChocolates = mutableMapOf((selectedItem as ChocolateForm) to (selectedItem as ChocolateForm).chocolate)
+            }
+            else if (selectedItem is ChocoSet) {
+                (selectedItem as ChocoSet).forms.forEach() {
+                    selectedChocolate[it] = it.chocolate
+                }
+            }*/
+            TasteBottomSheet(
+                item = selectedItem,
+                tastes = Datasource.tastes,
+                buttonTextId = R.string.add_to_cart,
+                onDismissRequest = { showBottomSheet = false },
+                onChipClicked = { chocolate: Chocolate, form: ChocolateForm ->
+//                    Log.d("chip0", chocolate.title)
+//                    Log.d("chip0", (selectedItem == form).toString())
+                    selectedChocolate = chocolate
+                    /*if (selectedItem is ChocolateForm) {
+                        selectedChocolates[selectedItem as ChocolateForm] = chocolate
+//                        viewModel.setChocolate(selectedItem as ChocolateForm, chocolate)
+                    } else if (selectedItem is ChocoSet) {
+                        selectedChocolates[form] = chocolate
+//                        viewModel.setChocolate(selectedItem as ChocoSet, form, chocolate)
+                    }*/
+                }, //todo
+                onButtonClicked = {
+                    if (selectedItem != null) {
+//                        val tmp = selectedChocolate.keys.contains(selectedItem)
+//                        Log.d("chip9", selectedItem!!.title)
+//                        Log.d("chip9", tmp.toString())
+                        if (selectedItem is ChocolateForm) (selectedItem as? ChocolateForm)?.updateChocolate(selectedChocolate)
+//                        if (selectedItem is ChocoSet) (selectedItem as? ChocoSet)?.updateChocolates(selectedChocolate)
+                        viewModel.addItem(selectedItem!!)
+                    }
+                    showBottomSheet = false
+
+                }, //todo add to cart and snackbar
+
+//                selectedChocolates = selectedChocolates,
+
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        if (showEditBottomSheet) {
+            TasteBottomSheet(
+                item = selectedEditItem,
+                tastes = Datasource.tastes,
+                buttonTextId = R.string.change,
+                onDismissRequest = { showEditBottomSheet = false },
+                onChipClicked = { chocolate, form ->
+                    selectedEditTaste = chocolate
+                }, //todo
+                onButtonClicked = {
+                    if (selectedEditItem != null) {
+                        selectedEditItem?.updateChocolate(selectedEditTaste)
+                        viewModel.setChocolate(selectedEditItem!!, selectedEditTaste!!)
+                        showEditBottomSheet = false
+                    }
+                }, //todo add to cart and snackbar
+
+//                selectedChocolates = selectedChocolates,
+
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
@@ -209,3 +288,14 @@ fun ChocolateApp (
 fun ChocolateAppPreview() {
     ChocolateApp()
 }
+
+fun selectItem(item: Orderable) {
+
+}
+
+
+/*items = listOf(
+                        Datasource.chocoSets[0],
+                        ChocolateForm(chocolate = Datasource.tastes[0], form = Datasource.forms[2]),
+                        ChocolateForm(chocolate = Datasource.tastes[0], form = Datasource.forms[1])
+                    )*/

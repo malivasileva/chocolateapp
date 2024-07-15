@@ -3,13 +3,8 @@ package com.example.chocolateapp.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -17,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.model.ChocoSet
+import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.model.Orderable
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
@@ -25,7 +21,9 @@ import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 fun OrderScreen (
     title: String,
     items: List<Orderable>,
-    onDeleteButtonClicked: () -> Unit = {} //TODO
+    onFormChipClicked: (Chocolate, ChocolateForm) -> Unit,
+    onDeleteButtonClicked: (Orderable) -> Unit = {}, //TODO
+    onDeleteSubButtonClicked: (ChocoSet, ChocolateForm) -> Unit
 ) {
     Column {
         LazyColumn (
@@ -35,16 +33,28 @@ fun OrderScreen (
         ){
             items (items) {
                 if (it is ChocoSet) {
-                    OrderSetCard(chocoSet = it, onDeleteButtonClicked = { onDeleteButtonClicked() })
+                    OrderSetCard(
+                        chocoSet = it,
+                        onChipClicked = { }, //todo
+                        onDeleteButtonClicked = { onDeleteButtonClicked(it) },
+                        onDeleteSubButtonClicked = { form: ChocolateForm ->
+                            onDeleteSubButtonClicked(it, form)
+                        })
                 }
                 if (it is ChocolateForm) {
-                    OrderFormCard(item = it, onDeleteButtonClicked = { onDeleteButtonClicked() })
+                    OrderFormCard(
+                        item = it,
+                        onChipClicked = { chocolate ->
+                            onFormChipClicked(chocolate, it) //todo
+                        },
+                        onDeleteButtonClicked = { onDeleteButtonClicked(it) }
+                    )
                 }
             }
         }
         OrderActionsRow(
             totalPrice = items.fold (0) { sum, item ->
-                sum + item.price
+                sum + item._price
             },
             onButtonClicked = { /*TODO*/ },
 //            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
@@ -58,7 +68,16 @@ fun OrderScreenPreview () {
     ChocolateAppTheme {
         OrderScreen(
             title = "Заказ",
-            items = Datasource.testOrder
+            onFormChipClicked = { chocolate, form ->
+
+            }, //todo
+            items = Datasource.testOrder,
+            onDeleteButtonClicked = {},
+            onDeleteSubButtonClicked = { chocoSet, chocoForm ->
+
+            }
+
+
         )
     }
 }

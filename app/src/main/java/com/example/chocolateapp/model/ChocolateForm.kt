@@ -1,13 +1,22 @@
 package com.example.chocolateapp.model
 
-import kotlin.math.round
-import kotlin.math.roundToInt
-
 data class ChocolateForm (
-    val chocolate: Chocolate,
+    private var _chocolate: Chocolate? = null,
     val form: Form,
     override val imageId: Int = form.imageId,
     override val title: String = form.title,
-    override val price: Int = (chocolate.price * form.weight / 100),
+    override var _price: Int = if (_chocolate != null) (_chocolate.price * form.weight / 100) else 0,
     override val weight: Int = form.weight
-) : Orderable
+
+) : Orderable {
+    val chocolate: Chocolate?
+        get() = _chocolate
+
+    val price: Int
+        get() = _price
+
+    fun updateChocolate(newChocolate: Chocolate?) {
+        _chocolate = newChocolate
+        _price = if (_chocolate != null) (_chocolate!!.price * form.weight / 100) else 0
+    }
+}
