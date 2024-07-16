@@ -13,4 +13,7 @@
     <string name="delete_from_cart">Удалить из корзины</string>
     <string name="nothing_choosed">Ничего не выбрано</string>
     <string name="change">Изменить</string>
+    <string name="snack_succesfully_added_to_cart">Товар добавлен в корзину!</string>
+    <string name="snack_succesfully_removed_from_cart">Товар успешно удален</string>
+    <string name="snack_succesfully_ordered">Заказ успешно оформлен!</string>
 </resources>

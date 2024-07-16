@@ -1,17 +1,23 @@
 package com.example.chocolateapp.ui
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -25,16 +31,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.model.ChocoSet
 import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
+import com.example.chocolateapp.model.Orderable
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 
 
@@ -45,6 +55,8 @@ fun OrderSetCard(
     onChipClicked: (ChocolateForm, Chocolate) -> Unit,
     onDeleteButtonClicked: () -> Unit,
     onDeleteSubButtonClicked: (ChocolateForm) -> Unit,
+    onIncButton: (Orderable) -> Unit,
+    onDecButton: (Orderable) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card {
@@ -63,6 +75,12 @@ fun OrderSetCard(
                 modifier = Modifier
                     .padding(end = dimensionResource(id = R.dimen.padding_small),
                         bottom = dimensionResource(id = R.dimen.padding_small))
+            )
+            AmountCounter(
+                amount = chocoSet.amount,
+                onIncButton = { onIncButton(chocoSet) },
+                onDecButton = { onDecButton(chocoSet) },
+                modifier = Modifier.align(Alignment.Start)
             )
             Column {
                 chocoSet.forms.forEach {
@@ -119,18 +137,30 @@ fun OrderSetItemContent(
 fun OrderFormCard(
     item: ChocolateForm,
     onChipClicked: (Chocolate) -> Unit,
-    onDeleteButtonClicked: () -> Unit
+    onDeleteButtonClicked: () -> Unit,
+    onIncButton: (Orderable) -> Unit,
+    onDecButton: (Orderable) -> Unit,
 ) {
     Card {
-        OrderItemContent(
-            imageId = item.imageId,
-            title = item.title,
-            weight = item.weight,
-            price = item._price,
-            chocolate = item.chocolate?.title,
-            onDeleteButtonClicked = { onDeleteButtonClicked() },
-            onChipClicked = { onChipClicked(item.chocolate!!) }, //todo
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(id = R.dimen.padding_small))
+        ){
+            OrderItemContent(
+                imageId = item.imageId,
+                title = item.title,
+                weight = item.weight,
+                price = item._price,
+                chocolate = item.chocolate?.title,
+                onDeleteButtonClicked = { onDeleteButtonClicked() },
+                onChipClicked = { onChipClicked(item.chocolate!!) }, //todo
+            )
+            AmountCounter(
+                amount = item.amount,
+                onIncButton = { onIncButton(item) },
+                onDecButton = { onDecButton(item) })
+        }
     }
 }
 
@@ -147,32 +177,47 @@ fun OrderItemContent (
 ) {
     Row (
         modifier = modifier
+//            .background(Color.Cyan)
     ){
         Image(
             painter = painterResource(id = imageId),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
-                .height(dimensionResource(id = R.dimen.image_small))
-                .width(dimensionResource(id = R.dimen.image_small))
+                .height(dimensionResource(id = R.dimen.image_medium))
+                .width(dimensionResource(id = R.dimen.image_medium))
                 .clip(MaterialTheme.shapes.small)
         )
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
         Column (
             modifier = Modifier.weight(1f)
+//                .fillMaxWidth()
         ){
-            Text(text = title)
-            Text(text = stringResource(id = R.string.weight, weight.toString()))
-        }
-        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
-        Column (
-            horizontalAlignment = Alignment.End
-        ){
-            Text(
-                text = stringResource(id = R.string.price, price.toString()),
-                maxLines = 1,
-                //            modifier = Modifier.align(Alignment.CenterVertically)
-            )
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                ,
+                horizontalArrangement = Arrangement.SpaceBetween
+
+            ){
+                Column (
+                ){
+                    Text(text = title)
+                    Text(text = stringResource(id = R.string.weight, weight.toString()))
+                }
+                Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
+                Column(
+                    horizontalAlignment = Alignment.End,
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.price, price.toString()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        modifier = Modifier.align(alignment = Alignment.End)
+                    )
+                }
+            }
             if (chocolate != null) {
                 SuggestionChip(
                     onClick = { onChipClicked() }, //todo
@@ -180,11 +225,54 @@ fun OrderItemContent (
                 )
             }
         }
-        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
+
+        /*Spacer(modifier = Modifier
+            .padding(dimensionResource(id = R.dimen.padding_small))
+            .background(color = Color.Red))*/
         DeleteButton(
             onButtonClicked = { onDeleteButtonClicked() },
             modifier = Modifier.align(Alignment.CenterVertically)
         )
+    }
+
+}
+
+@Composable
+fun AmountCounter (
+    amount: Int,
+    onIncButton: () -> Unit,
+    onDecButton: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row (
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.fillMaxWidth()
+    ){
+        Text(text = "Количество: ")
+        IconButton(
+            onClick = {
+                onDecButton()
+            },
+//                    modifier = Modifier.size(24.dp)
+            enabled = amount != 1,
+        ) {
+            Icon (
+                imageVector = Icons.Outlined.KeyboardArrowLeft,
+                contentDescription = "Уменьшить количество на 1"
+            )
+        }
+        Text(text = amount.toString())
+        IconButton(
+            onClick = {
+                onIncButton()
+            },
+        ) {
+            Icon (
+                imageVector = Icons.Outlined.KeyboardArrowRight,
+                contentDescription = "Увеличить количество на 1"
+            )
+        }
     }
 }
 
@@ -208,6 +296,7 @@ fun DeleteButton(
 @Composable
 fun OrderActionsRow(
     totalPrice: Int,
+    isButtonEnabled: Boolean,
     onButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -230,11 +319,12 @@ fun OrderActionsRow(
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
         Button(
             onClick = { onButtonClicked() },
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.small,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary
             ),
+            enabled = isButtonEnabled,
             modifier = Modifier.padding(end = paddingSmall)
         ) {
             Text(text = stringResource(R.string.order_items))
@@ -250,7 +340,13 @@ fun OrderSetCardPreview() {
             chocoSet = Datasource.chocoSets[0],
             onChipClicked = {chocoForm, chocolate ->},
             onDeleteButtonClicked = {},
-            onDeleteSubButtonClicked = {}
+            onDeleteSubButtonClicked = {},
+            onIncButton = {item ->
+
+            },
+            onDecButton = {item ->
+
+            },
         )
     }
 }
@@ -263,7 +359,9 @@ fun OrderFormCardPreview() {
             item = ChocolateForm(_chocolate = Datasource.tastes[0],
                 form = Datasource.forms[0]),
             onChipClicked = {},
-            onDeleteButtonClicked = {}
+            onDeleteButtonClicked = {},
+            onIncButton = {item ->},
+            onDecButton = {item ->},
         )
     }
 }

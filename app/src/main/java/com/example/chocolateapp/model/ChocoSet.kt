@@ -6,12 +6,13 @@ import androidx.annotation.DrawableRes
 data class ChocoSet(
     override val title: String,
     var forms: MutableList<ChocolateForm>,
+    override var amount: Int = 1,
     @DrawableRes override val imageId: Int,
-    override var _price: Int = forms.fold(0) {
+    override var _price: Int = amount * forms.fold(0) {
             sum, form ->
         sum + form._price
     },
-    override val weight: Int = forms.fold(0) {
+    override val weight: Int = amount * forms.fold(0) {
             sum, form ->
         sum + form.form.weight
     }
@@ -43,15 +44,23 @@ data class ChocoSet(
     }
 
     private fun updatePrice() {
-        _price = forms.fold(0) { sum, form -> sum + form._price }
+        _price = amount * forms.fold(0) { sum, form -> sum + form._price }
     }
 
     fun removeForm(form: ChocolateForm) {
-        Log.d("chocoSet2", "Removing form: $form")
-        Log.d("chocoSet2", forms.size.toString())
         forms.remove(form)
         updatePrice()
-        Log.d("chocoSet2", forms.size.toString())
+    }
 
+    override fun incAmount() {
+        amount++
+        updatePrice()
+    }
+
+    override fun decAmount() {
+        if (amount > 1) {
+            amount--
+            updatePrice()
+        }
     }
 }

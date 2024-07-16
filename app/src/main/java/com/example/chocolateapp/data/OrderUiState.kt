@@ -5,5 +5,6 @@ import com.example.chocolateapp.model.Orderable
 data class OrderUiState (
     val number: Int,
     val items: List<Orderable>,
+    val totalPrice: Int
 ){
 }

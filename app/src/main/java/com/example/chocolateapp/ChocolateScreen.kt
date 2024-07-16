@@ -19,6 +19,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -54,6 +56,7 @@ import com.example.chocolateapp.ui.OrderScreen
 import com.example.chocolateapp.ui.OrderViewModel
 import com.example.chocolateapp.ui.ChocoSetScreen
 import com.example.chocolateapp.ui.TasteBottomSheet
+import kotlinx.coroutines.launch
 
 
 sealed class ChocolateScreen (
@@ -140,8 +143,13 @@ fun ChocolateApp (
     val currentDestination = navBackStackEntry?.destination
     val currentScreen = currentDestination?.route
 
-    val sheetState = rememberModalBottomSheetState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val SUCCESS_ADD_TO_CART = stringResource(id = R.string.snack_succesfully_added_to_cart)
+    val SUCCESS_REMOVE_FROM_CART = stringResource(id = R.string.snack_succesfully_removed_from_cart)
+    val SUCCESS_ORDER = stringResource(id = R.string.snack_succesfully_ordered)
+
+    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<Orderable?>(null) }
     var selectedChocolates = remember { mutableStateListOf<Chocolate?>(null)}
@@ -160,6 +168,9 @@ fun ChocolateApp (
                 items = screens,
                 navController = navController,
             )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
         },
         modifier = Modifier
             .systemBarsPadding()
@@ -212,13 +223,40 @@ fun ChocolateApp (
                     },
                     onDeleteButtonClicked = { item: Orderable ->
                         viewModel.deleteItem(item)
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = SUCCESS_REMOVE_FROM_CART,
+//                            actionLabel = "ОК"
+                            )
+                        }
                     },
                     onDeleteSubButtonClicked = { item: ChocoSet, form: ChocolateForm ->
                         viewModel.deleteSubItem(item, form)
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = SUCCESS_REMOVE_FROM_CART,
+//                            actionLabel = "ОК"
+                            )
+                        }
                     },
                     onOrderButtonClicked = {
                         viewModel.clearOrder()
-                    }
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = SUCCESS_ORDER,
+//                            actionLabel = "ОК"
+                            )
+                        }
+                    },
+                    totalPrice = uiState.totalPrice,
+                    onIncButton = {item ->
+                        Log.d("ammmi", item.amount.toString())
+                        viewModel.increaseAmount(item)
+                    },
+                    onDecButton = {item ->
+                        Log.d("ammmd", item.amount.toString())
+                        viewModel.decreaseAmount(item)
+                    },
 
                 )
             }
@@ -240,6 +278,13 @@ fun ChocolateApp (
                         viewModel.addItem(selectedItem!!)
                     }
                     showBottomSheet = false
+
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = SUCCESS_ADD_TO_CART,
+//                            actionLabel = "ОК"
+                        )
+                    }
 
                 }, //todo add to cart and snackbar
                 modifier = Modifier.fillMaxWidth()

@@ -5,5 +5,9 @@ interface Orderable {
     var _price: Int
     val weight: Int
     val imageId: Int
-//    var amount: Int = 1
+    var amount: Int
+
+    fun incAmount()
+    fun decAmount()
+
 }
