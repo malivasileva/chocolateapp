@@ -19,11 +19,11 @@ import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 
 @Composable
 fun OrderScreen (
-    title: String,
     items: List<Orderable>,
-    onFormChipClicked: (Chocolate, ChocolateForm) -> Unit,
+    onFormChipClicked: (Chocolate, ChocolateForm, ChocoSet?) -> Unit,
     onDeleteButtonClicked: (Orderable) -> Unit = {}, //TODO
-    onDeleteSubButtonClicked: (ChocoSet, ChocolateForm) -> Unit
+    onDeleteSubButtonClicked: (ChocoSet, ChocolateForm) -> Unit,
+    onOrderButtonClicked: () -> Unit
 ) {
     Column {
         LazyColumn (
@@ -35,7 +35,8 @@ fun OrderScreen (
                 if (it is ChocoSet) {
                     OrderSetCard(
                         chocoSet = it,
-                        onChipClicked = { }, //todo
+                        onChipClicked = { chocolate, formFromSet ->
+                            onFormChipClicked(formFromSet, chocolate, it) }, //todo
                         onDeleteButtonClicked = { onDeleteButtonClicked(it) },
                         onDeleteSubButtonClicked = { form: ChocolateForm ->
                             onDeleteSubButtonClicked(it, form)
@@ -45,7 +46,7 @@ fun OrderScreen (
                     OrderFormCard(
                         item = it,
                         onChipClicked = { chocolate ->
-                            onFormChipClicked(chocolate, it) //todo
+                            onFormChipClicked(chocolate, it, null) //todo
                         },
                         onDeleteButtonClicked = { onDeleteButtonClicked(it) }
                     )
@@ -56,7 +57,7 @@ fun OrderScreen (
             totalPrice = items.fold (0) { sum, item ->
                 sum + item._price
             },
-            onButtonClicked = { /*TODO*/ },
+            onButtonClicked = { onOrderButtonClicked() },
 //            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
         )
     }
@@ -67,15 +68,15 @@ fun OrderScreen (
 fun OrderScreenPreview () {
     ChocolateAppTheme {
         OrderScreen(
-            title = "Заказ",
-            onFormChipClicked = { chocolate, form ->
+            onFormChipClicked = { chocolate, form, item ->
 
             }, //todo
             items = Datasource.testOrder,
             onDeleteButtonClicked = {},
             onDeleteSubButtonClicked = { chocoSet, chocoForm ->
 
-            }
+            },
+            onOrderButtonClicked = {}
 
 
         )

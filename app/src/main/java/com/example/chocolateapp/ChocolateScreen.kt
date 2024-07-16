@@ -25,6 +25,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -143,10 +144,11 @@ fun ChocolateApp (
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<Orderable?>(null) }
-    var selectedChocolate by remember { mutableStateOf<Chocolate?>(null)}
+    var selectedChocolates = remember { mutableStateListOf<Chocolate?>(null)}
 
     var showEditBottomSheet by remember { mutableStateOf(false) }
     var selectedEditItem by remember { mutableStateOf<ChocolateForm?>(null) }
+    var selectedChocoSet by remember { mutableStateOf<ChocoSet?>(null) }
     var selectedEditTaste by remember { mutableStateOf<Chocolate?>(null)}
 
     Scaffold (
@@ -180,6 +182,8 @@ fun ChocolateApp (
                     onButtonClicked = { chocolateForm ->
                         showBottomSheet = true
                         selectedItem = chocolateForm
+                        selectedChocolates.clear()
+                        selectedChocolates.add(null)
                     } //todo
                 )
             }
@@ -190,15 +194,19 @@ fun ChocolateApp (
                     onButtonClicked = { chocolateSet ->
                         showBottomSheet = true
                         selectedItem = chocolateSet
+                        selectedChocolates.clear()
+                        (chocolateSet as ChocoSet).forms.forEach {
+                            selectedChocolates.add(null)
+                        }
                     } //todo
                 )
             }
             composable(route = ChocolateScreen.Order.route) {
                 OrderScreen(
-                    title = stringResource(id = ChocolateScreen.Order.resourceId),
                     items = uiState.items,
-                    onFormChipClicked = { chocolate, item ->
-                        selectedEditItem = item
+                    onFormChipClicked = { chocolate, chocolateForm, chocoSet: ChocoSet? ->
+                        selectedChocoSet = chocoSet
+                        selectedEditItem = chocolateForm
                         selectedEditTaste = chocolate
                         showEditBottomSheet = true
                     },
@@ -207,57 +215,36 @@ fun ChocolateApp (
                     },
                     onDeleteSubButtonClicked = { item: ChocoSet, form: ChocolateForm ->
                         viewModel.deleteSubItem(item, form)
+                    },
+                    onOrderButtonClicked = {
+                        viewModel.clearOrder()
                     }
 
                 )
             }
         }
         if (showBottomSheet) {
-            /*if (selectedItem is ChocolateForm) {
-                selectedChocolate[selectedItem as ChocolateForm] = (selectedItem as ChocolateForm).chocolate
-//                selectedChocolates = mutableMapOf((selectedItem as ChocolateForm) to (selectedItem as ChocolateForm).chocolate)
-            }
-            else if (selectedItem is ChocoSet) {
-                (selectedItem as ChocoSet).forms.forEach() {
-                    selectedChocolate[it] = it.chocolate
-                }
-            }*/
             TasteBottomSheet(
                 item = selectedItem,
                 tastes = Datasource.tastes,
                 buttonTextId = R.string.add_to_cart,
                 onDismissRequest = { showBottomSheet = false },
-                onChipClicked = { chocolate: Chocolate, form: ChocolateForm ->
-//                    Log.d("chip0", chocolate.title)
-//                    Log.d("chip0", (selectedItem == form).toString())
-                    selectedChocolate = chocolate
-                    /*if (selectedItem is ChocolateForm) {
-                        selectedChocolates[selectedItem as ChocolateForm] = chocolate
-//                        viewModel.setChocolate(selectedItem as ChocolateForm, chocolate)
-                    } else if (selectedItem is ChocoSet) {
-                        selectedChocolates[form] = chocolate
-//                        viewModel.setChocolate(selectedItem as ChocoSet, form, chocolate)
-                    }*/
+                onChipClicked = { chocolate: Chocolate, index: Int ->
+                    selectedChocolates[index] = chocolate
                 }, //todo
                 onButtonClicked = {
                     if (selectedItem != null) {
-//                        val tmp = selectedChocolate.keys.contains(selectedItem)
-//                        Log.d("chip9", selectedItem!!.title)
-//                        Log.d("chip9", tmp.toString())
-                        if (selectedItem is ChocolateForm) (selectedItem as? ChocolateForm)?.updateChocolate(selectedChocolate)
-//                        if (selectedItem is ChocoSet) (selectedItem as? ChocoSet)?.updateChocolates(selectedChocolate)
+//                        Log.d("chip9", selectedChocolates.first().toString())
+                        if (selectedItem is ChocolateForm) (selectedItem as? ChocolateForm)?.updateChocolate(selectedChocolates.first())
+                        if (selectedItem is ChocoSet) (selectedItem as? ChocoSet)?.updateChocolates(selectedChocolates)
                         viewModel.addItem(selectedItem!!)
                     }
                     showBottomSheet = false
 
                 }, //todo add to cart and snackbar
-
-//                selectedChocolates = selectedChocolates,
-
                 modifier = Modifier.fillMaxWidth()
             )
         }
-
         if (showEditBottomSheet) {
             TasteBottomSheet(
                 item = selectedEditItem,
@@ -269,8 +256,12 @@ fun ChocolateApp (
                 }, //todo
                 onButtonClicked = {
                     if (selectedEditItem != null) {
-                        selectedEditItem?.updateChocolate(selectedEditTaste)
-                        viewModel.setChocolate(selectedEditItem!!, selectedEditTaste!!)
+                        if (selectedChocoSet != null) {
+                            selectedChocoSet?.updateSubItem(selectedEditItem!!, selectedEditTaste!!)
+                        } else {
+                            selectedEditItem?.updateChocolate(selectedEditTaste)
+                            viewModel.setChocolate(selectedEditItem!!, selectedEditTaste!!)
+                        }
                         showEditBottomSheet = false
                     }
                 }, //todo add to cart and snackbar

@@ -1,5 +1,6 @@
 package com.example.chocolateapp.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.chocolateapp.data.OrderUiState
 import com.example.chocolateapp.model.ChocoSet
@@ -36,16 +37,15 @@ class OrderViewModel : ViewModel() {
 
     fun deleteSubItem(item: ChocoSet, form: ChocolateForm) {
         val tmp = _uiState.value.items.toMutableList()
-        tmp.indexOf(item).let {
-            if (it != -1) {
-                (tmp[it] as ChocoSet).forms.remove(form)
-            }
+        val index = tmp.indexOf(item)
+        if (index != -1) {
+            (tmp[index] as ChocoSet).removeForm(form)
         }
-        _uiState.update { currentState ->
-            currentState.copy(
+        Log.d("chocoSet3", (tmp[index] as ChocoSet).forms.size.toString())
+        _uiState.update {currentState ->
+            currentState.copy (
                 items = tmp
             )
-
         }
     }
 

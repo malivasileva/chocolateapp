@@ -38,48 +38,11 @@ import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 
 
-@Composable
-fun OrderActionsRow(
-    totalPrice: Int,
-    onButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row (
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.secondaryContainer)
-            .fillMaxWidth()
-
-    ){
-        val paddingSmall = dimensionResource(id = R.dimen.padding_small)
-        Text(
-            text = stringResource(R.string.total_price, totalPrice),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = paddingSmall),
-            color = MaterialTheme.colorScheme.onSecondaryContainer
-        )
-        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
-        Button(
-            onClick = { onButtonClicked() },
-            shape = MaterialTheme.shapes.large,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            ),
-            modifier = Modifier.padding(end = paddingSmall)
-        ) {
-            Text(text = stringResource(R.string.order_items))
-        }
-    }
-}
-
 
 @Composable
 fun OrderSetCard(
     chocoSet: ChocoSet,
-    onChipClicked: () -> Unit,
+    onChipClicked: (ChocolateForm, Chocolate) -> Unit,
     onDeleteButtonClicked: () -> Unit,
     onDeleteSubButtonClicked: (ChocolateForm) -> Unit,
     modifier: Modifier = Modifier
@@ -95,7 +58,7 @@ fun OrderSetCard(
                 title = chocoSet.title,
                 weight = chocoSet.weight,
                 price = chocoSet._price,
-                onChipClicked = { onChipClicked() },
+                onChipClicked = { },
                 onDeleteButtonClicked = { onDeleteButtonClicked() },
                 modifier = Modifier
                     .padding(end = dimensionResource(id = R.dimen.padding_small),
@@ -112,7 +75,7 @@ fun OrderSetCard(
                     )
                     OrderSetItemContent(
                         item = it,
-                        onChipClicked = { onChipClicked() },
+                        onChipClicked = { onChipClicked(it, it.chocolate!!) },
                         onDeleteButtonClicked = { onDeleteSubButtonClicked(it) }
                     )
                 }
@@ -121,21 +84,7 @@ fun OrderSetCard(
     }
 }
 
-@Composable
-fun DeleteButton(
-    onButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    IconButton(
-        onClick = { onButtonClicked() },
-        modifier = modifier
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Close,
-            contentDescription = stringResource(R.string.delete_from_cart)
-        )
-    }
-}
+
 
 @Composable
 fun OrderSetItemContent(
@@ -166,6 +115,24 @@ fun OrderSetItemContent(
     }
 }
 
+@Composable
+fun OrderFormCard(
+    item: ChocolateForm,
+    onChipClicked: (Chocolate) -> Unit,
+    onDeleteButtonClicked: () -> Unit
+) {
+    Card {
+        OrderItemContent(
+            imageId = item.imageId,
+            title = item.title,
+            weight = item.weight,
+            price = item._price,
+            chocolate = item.chocolate?.title,
+            onDeleteButtonClicked = { onDeleteButtonClicked() },
+            onChipClicked = { onChipClicked(item.chocolate!!) }, //todo
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
+    }
+}
 
 @Composable
 fun OrderItemContent (
@@ -220,25 +187,60 @@ fun OrderItemContent (
         )
     }
 }
+
+
 @Composable
-fun OrderFormCard(
-    item: ChocolateForm,
-    onChipClicked: (Chocolate) -> Unit,
-    onDeleteButtonClicked: () -> Unit
+fun DeleteButton(
+    onButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Card {
-        OrderItemContent(
-            imageId = item.imageId,
-            title = item.title,
-            weight = item.weight,
-            price = item._price,
-            chocolate = item.chocolate?.title,
-            onDeleteButtonClicked = { onDeleteButtonClicked() },
-            onChipClicked = { onChipClicked(item.chocolate!!) }, //todo
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
+    IconButton(
+        onClick = { onButtonClicked() },
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Close,
+            contentDescription = stringResource(R.string.delete_from_cart)
+        )
     }
 }
 
+@Composable
+fun OrderActionsRow(
+    totalPrice: Int,
+    onButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .fillMaxWidth()
+
+    ){
+        val paddingSmall = dimensionResource(id = R.dimen.padding_small)
+        Text(
+            text = stringResource(R.string.total_price, totalPrice),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = paddingSmall),
+            color = MaterialTheme.colorScheme.onSecondaryContainer
+        )
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
+        Button(
+            onClick = { onButtonClicked() },
+            shape = MaterialTheme.shapes.large,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            ),
+            modifier = Modifier.padding(end = paddingSmall)
+        ) {
+            Text(text = stringResource(R.string.order_items))
+        }
+    }
+}
 
 @Preview
 @Composable
@@ -246,7 +248,7 @@ fun OrderSetCardPreview() {
     ChocolateAppTheme {
         OrderSetCard(
             chocoSet = Datasource.chocoSets[0],
-            onChipClicked = {},
+            onChipClicked = {chocoForm, chocolate ->},
             onDeleteButtonClicked = {},
             onDeleteSubButtonClicked = {}
         )

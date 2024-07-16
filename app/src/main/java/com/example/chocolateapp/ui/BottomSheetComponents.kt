@@ -1,5 +1,6 @@
 package com.example.chocolateapp.ui
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -19,13 +20,16 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,11 +55,12 @@ fun TasteBottomSheet (
     tastes: List<Chocolate>,
     @StringRes buttonTextId: Int,
     onDismissRequest: () -> Unit,
-    onChipClicked: (Chocolate, ChocolateForm) -> Unit,
+    onChipClicked: (Chocolate, Int) -> Unit,
     onButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedChocolate by remember { mutableStateOf<Chocolate?>(null) }
+    var selectedChocolates = remember { mutableStateListOf<Chocolate?>() }
+    selectedChocolates.clear()
     var buttonState by remember { mutableStateOf(false) }
     ModalBottomSheet(
         shape = MaterialTheme.shapes.medium,
@@ -65,22 +70,22 @@ fun TasteBottomSheet (
         modifier = modifier
     ) {
         if (item != null) {
+
             Column (
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
                     .fillMaxWidth()
             ) {
                 if (item is ChocolateForm) {
-//                    selectedChocolates = mutableMapOf(item to item.chocolate)
-//                    selectedChocolates[item] = Chocolate(title = "test", price = 1)
+                    selectedChocolates.add(null)
                     ChocolateFormItem(
                         item = item,
                         tastes = tastes,
-                        selectedChocolate = selectedChocolate,
+                        selectedChocolate = selectedChocolates.first() ,
                         onChipClicked = { chocolate ->
 //                            Log.d("chip00", selectedChocolates[item].toString())
-                            onChipClicked(chocolate, item)
-                            selectedChocolate = chocolate
+                            onChipClicked(chocolate, 0)
+                            selectedChocolates[0] = chocolate
                             buttonState = true
                         }) //todo
                     Button (
@@ -88,22 +93,22 @@ fun TasteBottomSheet (
                         shape = MaterialTheme.shapes.small,
                         content = { Text(text = stringResource(id = buttonTextId)) },
                         onClick = {
-                            item.updateChocolate(selectedChocolate)
+                            item.updateChocolate(selectedChocolates.first())
                             onButtonClicked() },
                         modifier = Modifier.align(Alignment.End)
                     )
                 } else if (item is ChocoSet) {
-                    /*item.forms.forEach { form ->
-                        selectedChocolate[form] = form.chocolate
+                    item.forms.forEach {
+                        selectedChocolates.add(null)
                     }
                     ChocoSetItem(
                         chocoSet = item,
                         tastes = tastes,
-                        selectedChocolates = selectedChocolate,
-                        onChipClicked = { chocolate, form ->
-                            onChipClicked(chocolate, form)
-                            selectedChocolate[form] = chocolate
-                            if (selectedChocolate.values.all { it != null })
+                        selectedChocolates = selectedChocolates,
+                        onChipClicked = { chocolate, index ->
+                            onChipClicked(chocolate, index)
+                            selectedChocolates[index] = chocolate
+                            if (selectedChocolates.all { it != null })
                             { buttonState = true }
                         } //todo
                     )
@@ -113,12 +118,13 @@ fun TasteBottomSheet (
                         content = { Text(text = stringResource(id = buttonTextId)) },
                         onClick = {
                             item.forms.forEach { form ->
-                                form.updateChocolate(selectedChocolate[form])
+                                val index = item.forms.indexOf(form)
+                                form.updateChocolate(selectedChocolates[index])
                             }
                             onButtonClicked()
                         },
                         modifier = Modifier.align(Alignment.End)
-                    )*/
+                    )
                 }
                 Spacer(modifier = Modifier
                     .statusBarsPadding()
@@ -145,8 +151,8 @@ fun TasteBottomSheet (
 fun ChocoSetItem (
     chocoSet: ChocoSet,
     tastes: List<Chocolate>,
-    selectedChocolates: Chocolate?,
-    onChipClicked: (Chocolate, ChocolateForm) -> Unit, //todo
+    selectedChocolates: MutableList<Chocolate?>,
+    onChipClicked: (Chocolate, Int) -> Unit, //todo
     modifier: Modifier = Modifier
 ) {
     Column (
@@ -155,16 +161,34 @@ fun ChocoSetItem (
         ItemInfo(
             imageId = chocoSet.imageId,
             title = chocoSet.title,
-            weight = chocoSet.weight
+            weight = chocoSet.weight,
+            modifier = Modifier
+                .padding(end = dimensionResource(id = R.dimen.padding_small),
+                    bottom = dimensionResource(id = R.dimen.padding_small))
         )
-        chocoSet.forms.forEach() {
+        Log.d("chocoSet", chocoSet.forms.size.toString())
+        Log.d("chocoSet",selectedChocolates.size.toString())
+        Log.d("chocoSet", (chocoSet.forms.size == selectedChocolates.size).toString())
+        chocoSet.forms.zip(selectedChocolates).forEach() { (form: ChocolateForm, selectedChocolate: Chocolate?) ->
+            Divider(
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(
+                    start = dimensionResource(id = R.dimen.padding_medium),
+                    end = dimensionResource(id = R.dimen.padding_medium)
+                )
+            )
             ChocolateFormItem(
-                item = it,
+                item = form,
                 tastes = tastes,
-                selectedChocolate = selectedChocolates,
+                selectedChocolate = selectedChocolate,
                 onChipClicked = { chocolate ->
-                    onChipClicked(chocolate, it)
-                } //todo
+                    onChipClicked(chocolate, chocoSet.forms.indexOf(form))
+                },
+                modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_medium),
+                    end = dimensionResource(id = R.dimen.padding_small),
+                    top = dimensionResource(id = R.dimen.padding_small),
+                    bottom = dimensionResource(id = R.dimen.padding_small)
+                )
             )
         }
     }
@@ -175,9 +199,12 @@ private fun ChocolateFormItem(
     item: ChocolateForm,
     tastes: List<Chocolate>,
     selectedChocolate: Chocolate?,
-    onChipClicked: (Chocolate) -> Unit
+    onChipClicked: (Chocolate) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column (
+        modifier = modifier
+    ) {
         ItemInfo(
             imageId = item.imageId,
             title = item.title,
@@ -198,9 +225,11 @@ private fun ChocolateFormItem(
 fun ItemInfo (
     @DrawableRes imageId: Int,
     title: String,
-    weight: Int
+    weight: Int,
+    modifier: Modifier = Modifier
 ) {
     Row (
+        modifier = modifier
     ){
         Image (
             painter = painterResource(id = imageId),
@@ -210,6 +239,7 @@ fun ItemInfo (
                 .height(dimensionResource(id = R.dimen.image_small))
                 .width(dimensionResource(id = R.dimen.image_small))
                 .clip(MaterialTheme.shapes.small)
+//                .padding(dimensionResource(id = R.dimen.padding_small))
         )
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
         Column {
