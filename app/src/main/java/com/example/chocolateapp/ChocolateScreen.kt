@@ -195,7 +195,7 @@ fun ChocolateApp (
                         selectedItem = chocolateForm
                         selectedChocolates.clear()
                         selectedChocolates.add(null)
-                    } //todo
+                    }
                 )
             }
             composable(route = ChocolateScreen.Set.route) {
@@ -203,13 +203,23 @@ fun ChocolateApp (
                     chocoSets = Datasource.chocoSets,
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
                     onButtonClicked = { chocolateSet ->
+
+                        val forms = mutableListOf<ChocolateForm>()
+                        chocolateSet.forms.forEach {
+                            forms.add(it.clone() as ChocolateForm)
+                        }
+                        val copySet = ChocoSet(
+                            title = chocolateSet.title,
+                            imageId = chocolateSet.imageId,
+                            forms = forms
+                        )
                         showBottomSheet = true
-                        selectedItem = chocolateSet
+                        selectedItem = copySet as Orderable
                         selectedChocolates.clear()
                         (chocolateSet as ChocoSet).forms.forEach {
                             selectedChocolates.add(null)
                         }
-                    } //todo
+                    }
                 )
             }
             composable(route = ChocolateScreen.Order.route) {
@@ -222,7 +232,7 @@ fun ChocolateApp (
                         showEditBottomSheet = true
                     },
                     onDeleteButtonClicked = { item: Orderable ->
-                        viewModel.deleteItem(item)
+                        viewModel.deleteItem(uiState.items.indexOf(item))
                         scope.launch {
                             snackbarHostState.showSnackbar(
                                 message = SUCCESS_REMOVE_FROM_CART,
@@ -250,11 +260,9 @@ fun ChocolateApp (
                     },
                     totalPrice = uiState.totalPrice,
                     onIncButton = {item ->
-                        Log.d("ammmi", item.amount.toString())
                         viewModel.increaseAmount(item)
                     },
                     onDecButton = {item ->
-                        Log.d("ammmd", item.amount.toString())
                         viewModel.decreaseAmount(item)
                     },
 
@@ -272,12 +280,14 @@ fun ChocolateApp (
                 }, //todo
                 onButtonClicked = {
                     if (selectedItem != null) {
-//                        Log.d("chip9", selectedChocolates.first().toString())
                         if (selectedItem is ChocolateForm) (selectedItem as? ChocolateForm)?.updateChocolate(selectedChocolates.first())
-                        if (selectedItem is ChocoSet) (selectedItem as? ChocoSet)?.updateChocolates(selectedChocolates)
-                        viewModel.addItem(selectedItem!!)
+                        if (selectedItem is ChocoSet) {
+                            (selectedItem as? ChocoSet)?.updateChocolates(selectedChocolates)
+                        }
+                        val copyItem = selectedItem!!.clone()
+//                        viewModel.addItem(selectedItem!!)
+                        viewModel.addItem(copyItem as Orderable)
                     }
-                    showBottomSheet = false
 
                     scope.launch {
                         snackbarHostState.showSnackbar(
@@ -285,6 +295,7 @@ fun ChocolateApp (
 //                            actionLabel = "ОК"
                         )
                     }
+                    showBottomSheet = false
 
                 }, //todo add to cart and snackbar
                 modifier = Modifier.fillMaxWidth()

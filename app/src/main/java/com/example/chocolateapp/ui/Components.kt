@@ -1,5 +1,6 @@
 package com.example.chocolateapp.ui
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

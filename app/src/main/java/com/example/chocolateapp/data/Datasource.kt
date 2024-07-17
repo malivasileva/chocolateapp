@@ -30,25 +30,25 @@ object Datasource {
         ChocoSet(
             title = "Рыбаку 1",
             mutableListOf(
-                ChocolateForm( _chocolate = tastes[0], form = forms[2]),
-                ChocolateForm( _chocolate = tastes[0], form = forms[3]),
-                ChocolateForm( _chocolate = tastes[0], form = forms[4]),),
+                ChocolateForm( _chocolate = null, form = forms[2]),
+                ChocolateForm( _chocolate = null, form = forms[3]),
+                ChocolateForm( _chocolate = null, form = forms[4]),),
             imageId = R.drawable.set_fishman1
         ),
         ChocoSet(
             title = "Рыбаку 2",
             mutableListOf(
-                ChocolateForm( _chocolate = tastes[1], form = forms[2]),
-                ChocolateForm( _chocolate = tastes[1], form = forms[3]),
-                ChocolateForm( _chocolate = tastes[1], form = forms[4]),),
+                ChocolateForm( _chocolate = null, form = forms[2]),
+                ChocolateForm( _chocolate = null, form = forms[3]),
+                ChocolateForm( _chocolate = null, form = forms[4]),),
             imageId = R.drawable.set_fishman2
         ),
         ChocoSet(
             title = "Рыбаку 3",
             mutableListOf(
-                ChocolateForm( _chocolate = tastes[2], form = forms[2]),
-                ChocolateForm( _chocolate = tastes[2], form = forms[3]),
-                ChocolateForm( _chocolate = tastes[2], form = forms[4]),),
+                ChocolateForm( _chocolate = null, form = forms[2]),
+                ChocolateForm( _chocolate = null, form = forms[3]),
+                ChocolateForm( _chocolate = null, form = forms[4]),),
             imageId = R.drawable.set_fishman3
         ),
         ChocoSet(

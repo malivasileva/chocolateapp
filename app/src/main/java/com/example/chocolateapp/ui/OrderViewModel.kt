@@ -1,9 +1,6 @@
 package com.example.chocolateapp.ui
 
-import android.util.Log
-import androidx.compose.runtime.currentComposer
 import androidx.lifecycle.ViewModel
-import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.data.OrderUiState
 import com.example.chocolateapp.model.ChocoSet
 import com.example.chocolateapp.model.Chocolate
@@ -31,17 +28,37 @@ class OrderViewModel : ViewModel() {
     }
 
     fun addItem(item: Orderable) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                items = _uiState.value.items + item
-            )
+        if (isInList(item)) {
+            val tmp = _uiState.value.items.toMutableList()
+            var existedItem: Orderable? = null
+            if (item is ChocoSet) {
+                existedItem = tmp.find {
+                    it is ChocoSet &&
+                    it.equalsInContent(item)
+                }
+            } else if (item is ChocolateForm) {
+                existedItem = tmp.find {
+                    it is ChocolateForm &&
+                    it.equalsInContent(item)
+                }
+            }
+
+            if (existedItem != null) {
+                increaseAmount(existedItem)
+            }
+        } else {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    items = _uiState.value.items + item
+                )
+            }
         }
         countTotalPrice()
     }
 
-    fun deleteItem(item: Orderable) {
+    fun deleteItem(index: Int) {
         val tmp = _uiState.value.items.toMutableList()
-        tmp.remove(item)
+        tmp.removeAt(index)
         _uiState.update {currentState ->
             currentState.copy (
                 items = tmp
@@ -56,7 +73,6 @@ class OrderViewModel : ViewModel() {
         if (index != -1) {
             (tmp[index] as ChocoSet).removeForm(form)
         }
-//        Log.d("chocoSet3", (tmp[index] as ChocoSet).forms.size.toString())
         _uiState.update {currentState ->
             currentState.copy (
                 items = tmp
@@ -105,8 +121,7 @@ class OrderViewModel : ViewModel() {
     }
 
     fun increaseAmount (item: Orderable) {
-        Log.d("ammmm1i", item.amount.toString())
-        var tmp = _uiState.value.items
+        val tmp = _uiState.value.items
         val index = tmp.indexOf(item)
         tmp[index].incAmount()
         _uiState.update { currentState ->
@@ -115,12 +130,10 @@ class OrderViewModel : ViewModel() {
             )
         }
         countTotalPrice()
-        Log.d("ammmm2i", item.amount.toString())
     }
 
     fun decreaseAmount (item: Orderable) {
-        Log.d("ammmm1d", item.amount.toString())
-        var tmp = _uiState.value.items
+        val tmp = _uiState.value.items
         val index = tmp.indexOf(item)
         tmp[index].decAmount()
         _uiState.update { currentState ->
@@ -129,6 +142,43 @@ class OrderViewModel : ViewModel() {
             )
         }
         countTotalPrice()
-        Log.d("ammmm2d", item.amount.toString())
     }
+
+    private fun isInList(item: Orderable): Boolean {
+        val tmp = _uiState.value.items
+        var result = false
+        if (item is ChocoSet) {
+            val chocoSetList = tmp.filterIsInstance<ChocoSet>()
+            result = chocoSetList.any {
+                it.equalsInContent(item)
+            }
+        } else if (item is ChocolateForm) {
+            result = tmp.any {
+                it is ChocolateForm &&
+                        it.chocolate == item.chocolate &&
+                        it.form == item.form
+            }
+        }
+        return result
+    }
+
+    /*fun getItemFormList(item: Orderable): Orderable? {
+        val tmp = _uiState.value.items
+        var result: Orderable? = null
+        if (item is ChocoSet) {
+            val chocoSet = item as ChocoSet
+            val chocoSetList = tmp.filter { it is ChocoSet }
+            val result = chocoSetList.find {it: Orderable ->
+                (it as ChocoSet).equalsInContent(item)
+            }
+        } else if (item is ChocolateForm) {
+            val chocoForm = item as ChocolateForm
+            val result = tmp.find {
+                it is ChocolateForm &&
+                        (it as ChocolateForm).chocolate == chocoForm.chocolate &&
+                        (it as ChocolateForm).form == chocoForm.form
+            }
+        }
+        return result
+    }*/
 }

@@ -1,6 +1,6 @@
 package com.example.chocolateapp.model
 
-interface Orderable {
+interface Orderable : Cloneable {
     val title: String
     var _price: Int
     val weight: Int
@@ -10,4 +10,7 @@ interface Orderable {
     fun incAmount()
     fun decAmount()
 
+    public override fun clone(): Any {
+        return super.clone()
+    }
 }

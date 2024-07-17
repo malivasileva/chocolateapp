@@ -28,17 +28,13 @@ import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 fun OrderScreen (
     items: List<Orderable>,
     onFormChipClicked: (Chocolate, ChocolateForm, ChocoSet?) -> Unit,
-    onDeleteButtonClicked: (Orderable) -> Unit = {}, //TODO
+    onDeleteButtonClicked: (Orderable) -> Unit = {},
     onDeleteSubButtonClicked: (ChocoSet, ChocolateForm) -> Unit,
     onOrderButtonClicked: () -> Unit,
     onIncButton: (Orderable) -> Unit,
     onDecButton: (Orderable) -> Unit,
     totalPrice: Int = 0,
 ) {
-    /*val color by animateColorAsState(
-        targetValue = if (items.isEmpty()) Color.Yellow
-        else Color.Green,
-    )*/
     Column {
         LazyColumn (
             modifier = Modifier.weight(1f),
@@ -50,7 +46,7 @@ fun OrderScreen (
                     OrderSetCard(
                         chocoSet = it,
                         onChipClicked = { chocolate, formFromSet ->
-                            onFormChipClicked(formFromSet, chocolate, it) }, //todo
+                            onFormChipClicked(formFromSet, chocolate, it) },
                         onDeleteButtonClicked = { onDeleteButtonClicked(it) },
                         onDeleteSubButtonClicked = { form: ChocolateForm ->
                             onDeleteSubButtonClicked(it, form)
@@ -67,7 +63,7 @@ fun OrderScreen (
                     OrderFormCard(
                         item = it,
                         onChipClicked = { chocolate ->
-                            onFormChipClicked(chocolate, it, null) //todo
+                            onFormChipClicked(chocolate, it, null)
                         },
                         onDeleteButtonClicked = { onDeleteButtonClicked(it) },
                         onIncButton = {item ->
@@ -95,7 +91,7 @@ fun OrderScreenPreview () {
         OrderScreen(
             onFormChipClicked = { chocolate, form, item ->
 
-            }, //todo
+            },
             items = Datasource.testOrder,
             onDeleteButtonClicked = {},
             onDeleteSubButtonClicked = { chocoSet, chocoForm ->

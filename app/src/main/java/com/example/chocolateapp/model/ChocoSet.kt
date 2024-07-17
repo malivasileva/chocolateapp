@@ -1,6 +1,5 @@
 package com.example.chocolateapp.model
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 
 data class ChocoSet(
@@ -62,5 +61,24 @@ data class ChocoSet(
             amount--
             updatePrice()
         }
+    }
+
+    /*override fun equals(other: Any?): Boolean {
+        *//*if (other is ChocoSet) {
+            if (this.forms.size != other.forms.size) return false
+            for (i in forms.indices) {
+                if (forms[i].equals(other.forms[i])) return false
+            }
+            return true
+        }*//*
+        return super.equals(other)
+    }*/
+
+    fun equalsInContent(other: ChocoSet): Boolean {
+        if (this.forms.size != other.forms.size) return false
+        for (i in forms.indices) {
+            if (!forms[i].equalsInContent(other.forms[i])) return false
+        }
+        return true
     }
 }

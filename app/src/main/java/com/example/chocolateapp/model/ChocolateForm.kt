@@ -1,7 +1,5 @@
 package com.example.chocolateapp.model
 
-import android.util.Log
-
 data class ChocolateForm (
     private var _chocolate: Chocolate? = null,
     val form: Form,
@@ -10,9 +8,8 @@ data class ChocolateForm (
     override var _price: Int = if (_chocolate != null) (_chocolate.price * form.weight / 100) else 0,
     override val weight: Int = form.weight,
     override var amount: Int = 1
-
-
 ) : Orderable {
+
     val chocolate: Chocolate?
         get() = _chocolate
 
@@ -29,19 +26,23 @@ data class ChocolateForm (
     }
 
     override fun incAmount() {
-        Log.d("ammmmm3", amount.toString())
         amount++
         updatePrice()
-        Log.d("ammmmm4", amount.toString())
     }
 
 
     override fun decAmount() {
-        Log.d("ammmmm1", amount.toString())
         if (amount > 1) {
             amount--
             updatePrice()
         }
-        Log.d("ammmmm2", amount.toString())
+    }
+
+    fun equalsInContent(other: ChocolateForm) : Boolean {
+        if (this.form == (other as? ChocolateForm)?.form
+            && this.chocolate == (other as? ChocolateForm)?.chocolate) {
+            return true
+        }
+        else return false
     }
 }

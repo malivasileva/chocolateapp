@@ -59,7 +59,7 @@ fun TasteBottomSheet (
     onButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedChocolates = remember { mutableStateListOf<Chocolate?>() }
+    val selectedChocolates = remember { mutableStateListOf<Chocolate?>() }
     selectedChocolates.clear()
     var buttonState by remember { mutableStateOf(false) }
     ModalBottomSheet(
@@ -83,11 +83,10 @@ fun TasteBottomSheet (
                         tastes = tastes,
                         selectedChocolate = selectedChocolates.first() ,
                         onChipClicked = { chocolate ->
-//                            Log.d("chip00", selectedChocolates[item].toString())
                             onChipClicked(chocolate, 0)
                             selectedChocolates[0] = chocolate
                             buttonState = true
-                        }) //todo
+                        })
                     Button (
                         enabled = buttonState,
                         shape = MaterialTheme.shapes.small,
@@ -110,7 +109,7 @@ fun TasteBottomSheet (
                             selectedChocolates[index] = chocolate
                             if (selectedChocolates.all { it != null })
                             { buttonState = true }
-                        } //todo
+                        }
                     )
                     Button (
                         enabled = buttonState,
@@ -152,7 +151,7 @@ fun ChocoSetItem (
     chocoSet: ChocoSet,
     tastes: List<Chocolate>,
     selectedChocolates: MutableList<Chocolate?>,
-    onChipClicked: (Chocolate, Int) -> Unit, //todo
+    onChipClicked: (Chocolate, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column (
@@ -214,7 +213,6 @@ private fun ChocolateFormItem(
             tastes = tastes,
             selectedChocolate = selectedChocolate,
             onChipClicked = { chocolate ->
-//                Log.d("chip000", selectedChocolate.toString())
                 onChipClicked(chocolate)
             }
         )
@@ -270,9 +268,8 @@ private fun ChipGroup(
                 label = { Text(text = it.title) },
                 selected = it == selectedChocolate,
                 onClick = {
-//                    Log.d("chip0000", selectedChocolate.toString())
                     onChipClicked(it)
-                }, //todo
+                },
                 modifier = Modifier
                     .padding(end = dimensionResource(id = R.dimen.padding_small))
             )
