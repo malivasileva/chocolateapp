@@ -1,6 +1,5 @@
 package com.example.chocolateapp.model
 
-import android.hardware.camera2.CameraExtensionSession.StillCaptureLatency
 import androidx.annotation.DrawableRes
 import com.example.chocolateapp.R
 

@@ -1,6 +1,5 @@
 package com.example.chocolateapp
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.tween
@@ -51,10 +50,10 @@ import com.example.chocolateapp.model.ChocoSet
 import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.model.Orderable
+import com.example.chocolateapp.ui.ChocoSetScreen
 import com.example.chocolateapp.ui.FormsScreen
 import com.example.chocolateapp.ui.OrderScreen
 import com.example.chocolateapp.ui.OrderViewModel
-import com.example.chocolateapp.ui.ChocoSetScreen
 import com.example.chocolateapp.ui.TasteBottomSheet
 import kotlinx.coroutines.launch
 
@@ -65,9 +64,9 @@ sealed class ChocolateScreen (
     @DrawableRes val iconId: Int
 ) {
     //    object Taste: ChocolateScreen("taste", R.string.chocolate, R.drawable.ic_chocolate)
-    object Set: ChocolateScreen("sets",R.string.sets, R.drawable.ic_set)
-    object Forms: ChocolateScreen("forms",R.string.forms, R.drawable.ic_chocolate)
-    object Order: ChocolateScreen("order",R.string.order, R.drawable.ic_cart)
+    data object Set: ChocolateScreen("sets",R.string.sets, R.drawable.ic_set)
+    data object Forms: ChocolateScreen("forms",R.string.forms, R.drawable.ic_chocolate)
+    data object Order: ChocolateScreen("order",R.string.order, R.drawable.ic_cart)
 }
 
 val screens = listOf(
@@ -136,7 +135,7 @@ fun ChocolateTopBar () {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChocolateApp (
-    viewModel: OrderViewModel = viewModel(),
+    viewModel: OrderViewModel = viewModel(factory = OrderViewModel.factory),
     navController: NavHostController = rememberNavController()
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -214,9 +213,9 @@ fun ChocolateApp (
                             forms = forms
                         )
                         showBottomSheet = true
-                        selectedItem = copySet as Orderable
+                        selectedItem = copySet
                         selectedChocolates.clear()
-                        (chocolateSet as ChocoSet).forms.forEach {
+                        (chocolateSet).forms.forEach {
                             selectedChocolates.add(null)
                         }
                     }
@@ -272,7 +271,8 @@ fun ChocolateApp (
         if (showBottomSheet) {
             TasteBottomSheet(
                 item = selectedItem,
-                tastes = Datasource.tastes,
+//                tastes = Datasource.tastes,
+                tastes = uiState.chocolates,
                 buttonTextId = R.string.add_to_cart,
                 onDismissRequest = { showBottomSheet = false },
                 onChipClicked = { chocolate: Chocolate, index: Int ->
@@ -304,7 +304,7 @@ fun ChocolateApp (
         if (showEditBottomSheet) {
             TasteBottomSheet(
                 item = selectedEditItem,
-                tastes = Datasource.tastes,
+                tastes = uiState.chocolates,
                 buttonTextId = R.string.change,
                 onDismissRequest = { showEditBottomSheet = false },
                 onChipClicked = { chocolate, form ->
@@ -321,9 +321,6 @@ fun ChocolateApp (
                         showEditBottomSheet = false
                     }
                 }, //todo add to cart and snackbar
-
-//                selectedChocolates = selectedChocolates,
-
                 modifier = Modifier.fillMaxWidth()
             )
         }

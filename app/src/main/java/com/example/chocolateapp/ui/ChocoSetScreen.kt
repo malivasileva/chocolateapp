@@ -1,6 +1,5 @@
 package com.example.chocolateapp.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -12,7 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.model.ChocoSet
-import com.example.chocolateapp.model.Orderable
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
 
 @Composable

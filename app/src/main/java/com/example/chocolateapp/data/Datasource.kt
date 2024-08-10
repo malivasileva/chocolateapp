@@ -1,10 +1,23 @@
 package com.example.chocolateapp.data
 
 import com.example.chocolateapp.R
+import com.example.chocolateapp.model.ChocoSet
 import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.model.Form
-import com.example.chocolateapp.model.ChocoSet
+
+/*object FormTable : IdTable<UUID> ("forms") {
+    override val id = uuid("id").entityId()
+    val title = varchar("title", 512).nullable()
+    val weight = integer("weight")
+}*/
+
+//object ChocoFormTable : IdTable<UUID>("Choco")
+
+/*object ChocoSetTable : IdTable<UUID> ("choco_sets") {
+    override val id = uuid("id").entityId()
+    val formsId = reference()
+}*/
 
 object Datasource {
     val tastes = listOf(

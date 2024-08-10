@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -214,7 +213,8 @@ private fun ChocolateFormItem(
             selectedChocolate = selectedChocolate,
             onChipClicked = { chocolate ->
                 onChipClicked(chocolate)
-            }
+            },
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -258,10 +258,12 @@ fun ItemInfo (
 private fun ChipGroup(
     tastes: List<Chocolate>,
     selectedChocolate: Chocolate?,
-    onChipClicked: (Chocolate) -> Unit
+    onChipClicked: (Chocolate) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    FlowRow( //todo finish placing chips
-        horizontalArrangement = Arrangement.SpaceAround
+    FlowRow(
+        horizontalArrangement = Arrangement.Start,
+        modifier = modifier
     ) {
         tastes.forEach {
             FilterChip(
