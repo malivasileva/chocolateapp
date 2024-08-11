@@ -17,11 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.model.ChocoSet
@@ -84,13 +87,29 @@ fun FormCard(
         modifier = modifier
     ){
         Column {
-            Image(
-                painter = painterResource(id = form.imageId),
-                contentDescription = null,
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(form.imgSrc)
+                    .crossfade(true)
+                    .build(),
+                error = painterResource(R.drawable.error_chocolate),
+                placeholder = painterResource(R.drawable.default_chocolate),
+                contentDescription = "photo of chocolate", //todo
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .heightIn(max = dimensionResource(id = R.dimen.image_size))
-            )
+                    .align(Alignment.CenterHorizontally))
+           /* if (form.imgSrc != null) {
+
+            } else {
+                Image(
+                    painter = painterResource(id = form.imageId),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .heightIn(max = dimensionResource(id = R.dimen.image_size))
+                )
+            }*/
             Row (
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -133,13 +152,18 @@ fun SetCard(
         modifier = modifier
     ){
         Column {
-            Image(
-                painter = painterResource(id = chocoSet.imageId),
-                contentDescription = null,
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(chocoSet.imgSrc)
+                    .crossfade(true)
+                    .build(),
+                error = painterResource(R.drawable.error_chocolate),
+                placeholder = painterResource(R.drawable.default_chocolate),
+                contentDescription = "photo of chocolate", //todo
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .heightIn(max = dimensionResource(id = R.dimen.image_size))
-            )
+                    .align(Alignment.CenterHorizontally))
             Row (
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier

@@ -1,4 +1,4 @@
-package com.example.chocolateapp.data
+package com.example.chocolateapp.data.dao
 
 import androidx.room.Dao
 

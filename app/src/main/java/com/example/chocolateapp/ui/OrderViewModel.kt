@@ -7,11 +7,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.chocolateapp.ChocolateApplication
-import com.example.chocolateapp.data.ChocolateEntity
-import com.example.chocolateapp.data.ChocolateRepository
+import com.example.chocolateapp.data.entity.ChocolateEntity
+import com.example.chocolateapp.data.repository.ChocolateRepository
+import com.example.chocolateapp.data.repository.ChocosetRepository
+import com.example.chocolateapp.data.repository.FormRepository
 import com.example.chocolateapp.model.ChocoSet
 import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
+import com.example.chocolateapp.model.Form
 import com.example.chocolateapp.model.Orderable
 import com.example.chocolateapp.util.Resource
 import kotlinx.coroutines.Dispatchers
@@ -26,17 +29,95 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class OrderViewModel(
-    private val chocoRepo: ChocolateRepository
+    private val chocoRepo: ChocolateRepository,
+    private val formRepo: FormRepository,
+    private val setRepo: ChocosetRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(OrderUiState(number = 0, items = listOf(), totalPrice = 0, chocolates = listOf<Chocolate>()))
+    private val _uiState = MutableStateFlow(OrderUiState(
+//        number = 0,
+        items = listOf(),
+        totalPrice = 0,
+        chocolates = listOf<Chocolate>(),
+        forms = listOf<Form>(),
+        chocosets = listOf<ChocoSet>()
+    ))
     val uiState: StateFlow<OrderUiState> = _uiState.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
+        fetchForms()
+        fetchChocoSets()
         fetchChocolates()
+
+    }
+
+    private fun fetchForms() {
+        viewModelScope.launch (Dispatchers.IO) {
+            formRepo.getAllForms().onEach {result ->
+                when(result) {
+                    is Resource.Success -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                forms = result.data?.map { it.toForm() } ?: emptyList()
+                            )
+                        }
+                    }
+                    is Resource.Error -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                forms = result.data?.map { it.toForm() } ?: emptyList()
+                            )
+                        }
+                        _eventFlow.emit(UIEvent.ShowSnackbar(
+                            result.message ?: "Unknown error"
+                        ))
+                    }
+                    is Resource.Loading -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                forms = result.data?.map { it.toForm() } ?: emptyList()
+                            )
+                        }
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+    private fun fetchChocoSets() {
+        viewModelScope.launch(Dispatchers.IO) {
+            setRepo.getAllChocosets().onEach {result ->
+                when(result) {
+                    is Resource.Success -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                chocosets = result.data ?: emptyList()
+                            )
+                        }
+                    }
+                    is Resource.Error -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                chocosets = result.data ?: emptyList()
+                            )
+                        }
+                        _eventFlow.emit(UIEvent.ShowSnackbar(
+                            result.message ?: "Unknown error"
+                        ))
+                    }
+                    is Resource.Loading -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                chocosets = result.data ?: emptyList()
+                            )
+                        }
+                    }
+                }
+            }.launchIn(this)
+        }
     }
 
     private fun fetchChocolates() {
@@ -228,7 +309,9 @@ class OrderViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as ChocolateApplication)
                 OrderViewModel(
-                    application.container.chocolateRepository
+                    application.container.chocolateRepository,
+                    application.container.formRepository,
+                    application.container.setRepository
                 )
             }
         }
@@ -241,9 +324,11 @@ class OrderViewModel(
 
 
 data class OrderUiState (
-    val number: Int,
+//    val number: Int,
     val items: List<Orderable>,
     val chocolates: List<Chocolate>,
+    val forms: List<Form>,
+    val chocosets: List<ChocoSet>,
     val totalPrice: Int
 ){
 }

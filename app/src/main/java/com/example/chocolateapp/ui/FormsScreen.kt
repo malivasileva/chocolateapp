@@ -30,7 +30,7 @@ fun FormsScreen (
         items(forms) {
             FormCard (
                 form = it,
-                onButtonClicked = { onButtonClicked(ChocolateForm(form = it, _chocolate = null)) }
+                onButtonClicked = { onButtonClicked(ChocolateForm(form = it, _chocolate = null, imgSrc = it.imgSrc)) }
             )
         }
     }

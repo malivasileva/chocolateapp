@@ -29,54 +29,58 @@ object Datasource {
     )
 
     val forms = listOf(
-        Form(title = "Слиток", weight = 1000, imageId = R.drawable.ingot),
-        Form(title = "Плитка", weight = 100, imageId = R.drawable.bar),
-        Form(title = "Рыба 1", weight = 20, imageId = R.drawable.fish),
-        Form(title = "Лодка", weight = 40, imageId = R.drawable.boat),
-        Form(title = "Рыба 2", weight = 15, imageId = R.drawable.fish2),
-        Form(title = "Поезд 1", weight = 35, imageId = R.drawable.train1),
-        Form(title = "Поезд 2", weight = 35, imageId = R.drawable.train2),
-        Form(title = "Поезд 3", weight = 35, imageId = R.drawable.train3),
+        Form(title = "Слиток", weight = 1000, imageId = R.drawable.ingot, imgSrc = ""),
+        Form(title = "Плитка", weight = 100, imageId = R.drawable.bar, imgSrc = "https://choco38.ru/img/bar.jpg"),
+        Form(title = "Рыба 1", weight = 20, imageId = R.drawable.fish, imgSrc = ""),
+        Form(title = "Лодка", weight = 40, imageId = R.drawable.boat, imgSrc = ""),
+        Form(title = "Рыба 2", weight = 15, imageId = R.drawable.fish2, imgSrc = ""),
+        Form(title = "Поезд 1", weight = 35, imageId = R.drawable.train1, imgSrc = ""),
+        Form(title = "Поезд 2", weight = 35, imageId = R.drawable.train2, imgSrc = ""),
+        Form(title = "Поезд 3", weight = 35, imageId = R.drawable.train3, imgSrc = ""),
     )
 
     val chocoSets = listOf(
         ChocoSet(
             title = "Рыбаку 1",
-            mutableListOf(
-                ChocolateForm( _chocolate = null, form = forms[2]),
-                ChocolateForm( _chocolate = null, form = forms[3]),
-                ChocolateForm( _chocolate = null, form = forms[4]),),
-            imageId = R.drawable.set_fishman1
+            forms = mutableListOf(
+                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = ""),
+                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = ""),
+                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = ""),),
+            imageId = R.drawable.set_fishman1,
+            imgSrc = ""
         ),
         ChocoSet(
             title = "Рыбаку 2",
-            mutableListOf(
-                ChocolateForm( _chocolate = null, form = forms[2]),
-                ChocolateForm( _chocolate = null, form = forms[3]),
-                ChocolateForm( _chocolate = null, form = forms[4]),),
-            imageId = R.drawable.set_fishman2
+            forms = mutableListOf(
+                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = ""),
+                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = ""),
+                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = ""),),
+            imageId = R.drawable.set_fishman2,
+            imgSrc = ""
         ),
         ChocoSet(
             title = "Рыбаку 3",
-            mutableListOf(
-                ChocolateForm( _chocolate = null, form = forms[2]),
-                ChocolateForm( _chocolate = null, form = forms[3]),
-                ChocolateForm( _chocolate = null, form = forms[4]),),
-            imageId = R.drawable.set_fishman3
+            forms = mutableListOf(
+                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = ""),
+                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = ""),
+                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = ""),),
+            imageId = R.drawable.set_fishman3,
+            imgSrc = ""
         ),
         ChocoSet(
             title = "Железная дорога",
-            mutableListOf(
-                ChocolateForm( _chocolate = tastes[2], form = forms[5]),
-                ChocolateForm( _chocolate = tastes[2], form = forms[6]),
-                ChocolateForm( _chocolate = tastes[2], form = forms[7]),),
-            imageId = R.drawable.set_trains
+            forms = mutableListOf(
+                ChocolateForm( _chocolate = tastes[2], form = forms[5], imgSrc = ""),
+                ChocolateForm( _chocolate = tastes[2], form = forms[6], imgSrc = ""),
+                ChocolateForm( _chocolate = tastes[2], form = forms[7], imgSrc = "")),
+            imageId = R.drawable.set_trains,
+            imgSrc = ""
         ),
     )
 
     val testOrder = listOf(
         chocoSets[0],
-        ChocolateForm(_chocolate = tastes[0], form = forms[2]),
-        ChocolateForm(_chocolate = tastes[0], form = forms[1])
+        ChocolateForm(_chocolate = tastes[0], form = forms[2], imgSrc = ""),
+        ChocolateForm(_chocolate = tastes[0], form = forms[1], imgSrc = "")
     )
 }

@@ -4,6 +4,7 @@ data class ChocolateForm (
     private var _chocolate: Chocolate? = null,
     val form: Form,
     override val imageId: Int = form.imageId,
+    override val imgSrc: String,
     override val title: String = form.title,
     override var _price: Int = if (_chocolate != null) (_chocolate.price * form.weight / 100) else 0,
     override val weight: Int = form.weight,

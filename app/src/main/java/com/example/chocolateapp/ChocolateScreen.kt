@@ -1,5 +1,6 @@
 package com.example.chocolateapp
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.tween
@@ -187,7 +188,7 @@ fun ChocolateApp (
         ) {
             composable(route = ChocolateScreen.Forms.route) {
                 FormsScreen(
-                    forms = Datasource.forms,
+                    forms = uiState.forms,
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
                     onButtonClicked = { chocolateForm ->
                         showBottomSheet = true
@@ -199,7 +200,7 @@ fun ChocolateApp (
             }
             composable(route = ChocolateScreen.Set.route) {
                 ChocoSetScreen(
-                    chocoSets = Datasource.chocoSets,
+                    chocoSets = uiState.chocosets,
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
                     onButtonClicked = { chocolateSet ->
 
@@ -210,7 +211,8 @@ fun ChocolateApp (
                         val copySet = ChocoSet(
                             title = chocolateSet.title,
                             imageId = chocolateSet.imageId,
-                            forms = forms
+                            forms = forms,
+                            imgSrc = chocolateSet.imgSrc
                         )
                         showBottomSheet = true
                         selectedItem = copySet

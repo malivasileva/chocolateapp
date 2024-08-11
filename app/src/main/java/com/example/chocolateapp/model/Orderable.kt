@@ -5,6 +5,7 @@ interface Orderable : Cloneable {
     var _price: Int
     val weight: Int
     val imageId: Int
+    val imgSrc: String
     var amount: Int
 
     fun incAmount()

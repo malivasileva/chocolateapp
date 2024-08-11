@@ -1,9 +1,10 @@
-package com.example.chocolateapp.data
+package com.example.chocolateapp.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.chocolateapp.data.entity.ChocolateEntity
 
 @Dao
 interface ChocolateDao {

@@ -1,5 +1,6 @@
-package com.example.chocolateapp.data
+package com.example.chocolateapp.data.repository
 
+import com.example.chocolateapp.data.entity.ChocolateEntity
 import com.example.chocolateapp.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -8,7 +9,7 @@ interface ChocolateRepository {
 
 //    suspend fun insertChocolateList(chocolates : List<ChocolateEntity>)
     suspend fun deleteChocolate(chocolate : ChocolateEntity)
-    fun getAllChocolates() : Flow<Resource<List<ChocolateEntity>>>
+    suspend fun getAllChocolates() : Flow<Resource<List<ChocolateEntity>>>
 
     fun cleareChocolate()
 }

@@ -36,10 +36,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.model.ChocoSet
@@ -69,7 +72,6 @@ fun TasteBottomSheet (
         modifier = modifier
     ) {
         if (item != null) {
-
             Column (
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
@@ -157,16 +159,13 @@ fun ChocoSetItem (
         modifier = modifier
     ) {
         ItemInfo(
-            imageId = chocoSet.imageId,
+            imgSrc = chocoSet.imgSrc,
             title = chocoSet.title,
             weight = chocoSet.weight,
             modifier = Modifier
                 .padding(end = dimensionResource(id = R.dimen.padding_small),
                     bottom = dimensionResource(id = R.dimen.padding_small))
         )
-        Log.d("chocoSet", chocoSet.forms.size.toString())
-        Log.d("chocoSet",selectedChocolates.size.toString())
-        Log.d("chocoSet", (chocoSet.forms.size == selectedChocolates.size).toString())
         chocoSet.forms.zip(selectedChocolates).forEach() { (form: ChocolateForm, selectedChocolate: Chocolate?) ->
             Divider(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -204,7 +203,7 @@ private fun ChocolateFormItem(
         modifier = modifier
     ) {
         ItemInfo(
-            imageId = item.imageId,
+            imgSrc = item.imgSrc,
             title = item.title,
             weight = item.weight
         )
@@ -221,7 +220,7 @@ private fun ChocolateFormItem(
 
 @Composable
 fun ItemInfo (
-    @DrawableRes imageId: Int,
+    imgSrc: String,
     title: String,
     weight: Int,
     modifier: Modifier = Modifier
@@ -229,9 +228,14 @@ fun ItemInfo (
     Row (
         modifier = modifier
     ){
-        Image (
-            painter = painterResource(id = imageId),
-            contentDescription = null,
+        AsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(imgSrc)
+                .crossfade(true)
+                .build(),
+            error = painterResource(R.drawable.error_chocolate),
+            placeholder = painterResource(R.drawable.default_chocolate),
+            contentDescription = "photo of chocolate", //todo
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .height(dimensionResource(id = R.dimen.image_small))
@@ -239,6 +243,16 @@ fun ItemInfo (
                 .clip(MaterialTheme.shapes.small)
 //                .padding(dimensionResource(id = R.dimen.padding_small))
         )
+        /*Image (
+            painter = painterResource(id = imgSrc),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .height(dimensionResource(id = R.dimen.image_small))
+                .width(dimensionResource(id = R.dimen.image_small))
+                .clip(MaterialTheme.shapes.small)
+//                .padding(dimensionResource(id = R.dimen.padding_small))
+        )*/ //todo
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
         Column {
             Text(

@@ -1,4 +1,4 @@
-package com.example.chocolateapp.data
+package com.example.chocolateapp.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

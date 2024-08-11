@@ -1,7 +1,5 @@
 package com.example.chocolateapp.ui
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,11 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.chocolateapp.R
 import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.model.ChocoSet
@@ -60,7 +61,7 @@ fun OrderSetCard(
                 .padding(dimensionResource(id = R.dimen.padding_small))
         ){
             OrderItemContent(
-                imageId = chocoSet.imageId,
+                imgSrc = chocoSet.imgSrc,
                 title = chocoSet.title,
                 weight = chocoSet.weight,
                 price = chocoSet._price,
@@ -116,7 +117,7 @@ fun OrderSetItemContent(
     ){
 //        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large)))
         OrderItemContent (
-            imageId = item.imageId,
+            imgSrc = item.imgSrc,
             title = item.title,
             weight = item.weight,
             price = item.price,
@@ -142,7 +143,7 @@ fun OrderFormCard(
                 .padding(dimensionResource(id = R.dimen.padding_small))
         ){
             OrderItemContent(
-                imageId = item.imageId,
+                imgSrc = item.imgSrc,
                 title = item.title,
                 weight = item.weight,
                 price = item._price,
@@ -161,7 +162,7 @@ fun OrderFormCard(
 @Composable
 fun OrderItemContent (
     modifier: Modifier = Modifier,
-    @DrawableRes imageId: Int,
+    imgSrc: String,
     title: String,
     weight: Int,
     price: Int,
@@ -173,7 +174,21 @@ fun OrderItemContent (
         modifier = modifier
 //            .background(Color.Cyan)
     ){
-        Image(
+        AsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(imgSrc)
+                .crossfade(true)
+                .build(),
+            error = painterResource(R.drawable.error_chocolate),
+            placeholder = painterResource(R.drawable.default_chocolate),
+            contentDescription = "photo of chocolate", //todo
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .height(dimensionResource(id = R.dimen.image_medium))
+                .width(dimensionResource(id = R.dimen.image_medium))
+                .clip(MaterialTheme.shapes.small)
+        )
+        /*Image(
             painter = painterResource(id = imageId),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
@@ -181,7 +196,7 @@ fun OrderItemContent (
                 .height(dimensionResource(id = R.dimen.image_medium))
                 .width(dimensionResource(id = R.dimen.image_medium))
                 .clip(MaterialTheme.shapes.small)
-        )
+        )*/
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
         Column (
             modifier = Modifier.weight(1f)
@@ -351,7 +366,7 @@ fun OrderFormCardPreview() {
     ChocolateAppTheme {
         OrderFormCard(
             item = ChocolateForm(_chocolate = Datasource.tastes[0],
-                form = Datasource.forms[0]),
+                form = Datasource.forms[0], imgSrc = ""),
             onChipClicked = {},
             onDeleteButtonClicked = {},
             onIncButton = {item ->},
