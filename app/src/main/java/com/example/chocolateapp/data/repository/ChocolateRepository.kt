@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChocolateRepository {
     suspend fun insertChocolate(chocolate : ChocolateEntity)
-
-//    suspend fun insertChocolateList(chocolates : List<ChocolateEntity>)
     suspend fun deleteChocolate(chocolate : ChocolateEntity)
     suspend fun getAllChocolates() : Flow<Resource<List<ChocolateEntity>>>
 

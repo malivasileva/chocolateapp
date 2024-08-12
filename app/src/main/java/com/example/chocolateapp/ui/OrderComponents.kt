@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
@@ -60,6 +62,7 @@ import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.model.Orderable
 import com.example.chocolateapp.ui.theme.ChocolateAppTheme
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -147,7 +150,6 @@ fun OrderSetItemContent(
                 start = dimensionResource(id = R.dimen.padding_large)
             )
     ){
-//        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large)))
         OrderItemContent (
             imgSrc = item.imgSrc,
             title = item.title,
@@ -280,7 +282,7 @@ fun AmountCounter (
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.wrapContentWidth()
     ){
-        Text(text = "Количество: ")
+        Text(text = stringResource(R.string.amount))
         IconButton(
             onClick = {
                 onDecButton()
@@ -288,7 +290,7 @@ fun AmountCounter (
             enabled = amount != 1,
         ) {
             Icon (
-                imageVector = Icons.Outlined.KeyboardArrowLeft,
+                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
                 contentDescription = stringResource(R.string.decrease_by_one)
             )
         }
@@ -299,7 +301,7 @@ fun AmountCounter (
             },
         ) {
             Icon (
-                imageVector = Icons.Outlined.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = stringResource(R.string.increase_by_one)
             )
         }
@@ -345,12 +347,10 @@ fun OrderActionsRow(
             .height(140.dp)
             .padding(horizontal = paddingSmall)
     ){
-        //todo
         Row (
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = modifier
-//                .background(Color.Yellow)
                 .weight(1f)
                 .fillMaxWidth()
                 .padding(top = paddingSmall)
@@ -423,19 +423,20 @@ fun OrderActionsRow(
                 Text(
                     text = stringResource(R.string.total_price, totalPrice),
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-//                        .weight(1.5f)
-//                    .padding(start = paddingSmall),
-                    ,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 if (discount != 1f) {
-                    Text( //todo
-                        text = stringResource(id = R.string.price, totalPrice / discount),
+                    var fullPrice = (totalPrice / discount).roundToInt()
+                    fullPrice = if (fullPrice % 10 >= 5) {
+                        ((fullPrice / 10) + 1) * 10
+                    } else {
+                        (fullPrice / 10) * 10
+                    }
+                    Text(
+                        text = stringResource(id = R.string.price, fullPrice),
                         textDecoration = TextDecoration.LineThrough,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
-//                        modifier = Modifier.weight(1f)
                     )
                 } else {
                     Spacer(modifier = Modifier.weight(1f))

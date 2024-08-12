@@ -5,6 +5,6 @@ import retrofit2.Response
 import okhttp3.ResponseBody
 
 interface OrderRepository {
-    suspend fun sendOrder(order: Order) : Int   //todo response
+    suspend fun sendOrder(order: Order) : Int
     suspend fun checkPromocode(promocode: String) : Int
 }

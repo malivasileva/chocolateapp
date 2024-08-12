@@ -12,5 +12,4 @@ data class ChocolateEntity(
     val title: String,
     val price: Int,
     val description: String = "Чудесный шоколад",
-//    val imageId: String
 )

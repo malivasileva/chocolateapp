@@ -1,10 +1,6 @@
 package com.example.chocolateapp.ui
 
-import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -53,7 +49,7 @@ import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.model.Orderable
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasteBottomSheet (
     item: Orderable?,
@@ -102,7 +98,7 @@ fun TasteBottomSheet (
                         modifier = Modifier.align(Alignment.End)
                     )
                 } else if (item is ChocoSet) {
-                    item.forms.forEach {
+                    repeat(item.forms.size) {
                         selectedChocolates.add(null)
                     }
                     ChocoSetItem(
@@ -110,7 +106,6 @@ fun TasteBottomSheet (
                         tastes = tastes,
                         selectedChocolates = selectedChocolates,
                         onChipClicked = { chocolate, index ->
-                            Log.d("govno1", "$chocolate , $index")
                             onChipClicked(chocolate, index)
                             selectedChocolates[index] = chocolate
                             if (selectedChocolates.all { it != null })
@@ -148,7 +143,7 @@ fun TasteBottomSheet (
                 .statusBarsPadding()
                 .navigationBarsPadding()
             )
-        } //no item chosen
+        }
     }
 }
 
@@ -184,7 +179,6 @@ fun ChocoSetItem (
                 tastes = tastes,
                 selectedChocolate = selectedChocolate,
                 onChipClicked = { chocolate ->
-                    Log.d("govno2", "${chocoSet.forms}")
                     onChipClicked(chocolate, chocoSet.forms.indexOfFirst { it === form })
                 },
                 modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_medium),
@@ -241,24 +235,13 @@ fun ItemInfo (
                 .build(),
             error = painterResource(R.drawable.error_chocolate),
             placeholder = painterResource(R.drawable.default_chocolate),
-            contentDescription = "photo of chocolate", //todo
+            contentDescription = "Изображение товара $title",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .height(dimensionResource(id = R.dimen.image_small))
                 .width(dimensionResource(id = R.dimen.image_small))
                 .clip(MaterialTheme.shapes.small)
-//                .padding(dimensionResource(id = R.dimen.padding_small))
         )
-        /*Image (
-            painter = painterResource(id = imgSrc),
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .height(dimensionResource(id = R.dimen.image_small))
-                .width(dimensionResource(id = R.dimen.image_small))
-                .clip(MaterialTheme.shapes.small)
-//                .padding(dimensionResource(id = R.dimen.padding_small))
-        )*/ //todo
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
         Column {
             Text(
@@ -311,7 +294,6 @@ fun BottomSheetPreview() {
         onChipClicked = { chocolate, chocolateForm ->
         },
         onButtonClicked = { },
-//        selectedChocolates = mutableMapOf(),
         modifier = Modifier.fillMaxWidth()
     )
 }

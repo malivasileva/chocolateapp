@@ -24,4 +24,13 @@
     <string name="apply">Применить</string>
     <string name="increase_by_one">Увеличить количество на 1</string>
     <string name="decrease_by_one">Уменьшить количество на 1</string>
+    <string name="cd_photo">Изображение товара %1$s</string>
+    <string name="amount">"Количество: "</string>
+    <string name="order_form_headline">Для оформления заказа заполните следующие поля</string>
+    <string name="your_name">Ваше имя</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="choose_way_to_contact">Выберите способ связи</string>
+    <string name="personal_data_agreement">Нажимая \"Подтвердить\" Вы соглашаетесь с обработкой персональных данных.</string>
+    <string name="accept">Подтвердить</string>
+    <string name="back">Назад</string>
 </resources>

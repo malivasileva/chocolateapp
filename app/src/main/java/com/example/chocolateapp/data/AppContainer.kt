@@ -2,12 +2,12 @@ package com.example.chocolateapp.data
 
 import android.content.Context
 import com.example.chocolateapp.data.repository.ChocolateRepository
-import com.example.chocolateapp.data.repository.ChocosetRepository
+import com.example.chocolateapp.data.repository.ChocoSetRepository
 import com.example.chocolateapp.data.repository.FormRepository
 import com.example.chocolateapp.data.repository.OrderRepository
 import com.example.chocolateapp.network.ChocolateApiService
 import com.example.chocolateapp.repository.ChocolateRepositoryImpl
-import com.example.chocolateapp.repository.ChocosetRepositoryImpl
+import com.example.chocolateapp.repository.ChocoSetRepositoryImpl
 import com.example.chocolateapp.repository.FormRepositoryImpl
 import com.example.chocolateapp.repository.OrderRepositoryImpl
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -18,7 +18,7 @@ import retrofit2.Retrofit
 interface AppContainer  {
     val chocolateRepository : ChocolateRepository
     val formRepository : FormRepository
-    val setRepository : ChocosetRepository
+    val setRepository : ChocoSetRepository
     val orderRepository : OrderRepository
 }
 
@@ -47,8 +47,8 @@ class AppDataContainer (private val context: Context) : AppContainer {
         )
     }
 
-    override val setRepository: ChocosetRepository by lazy {
-        ChocosetRepositoryImpl(
+    override val setRepository: ChocoSetRepository by lazy {
+        ChocoSetRepositoryImpl(
             retrofitService,
             ChocolateDatabase.getDatabase(context).chocosetDao(),
             ChocolateDatabase.getDatabase(context).formInSetDao(),

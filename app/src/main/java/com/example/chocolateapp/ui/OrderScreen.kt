@@ -114,7 +114,7 @@ fun OrderScreen (
             isButtonEnabled = items.isNotEmpty(),
             isPromocodeFieldEnabled = isPromocodeFieldEnable,
             isPromocodeButtonEnable = isPromocodeButtonEnable,
-            onPromocodeButtonClicked = { //todo
+            onPromocodeButtonClicked = {
                 onPromocodeButtonClicked()
             },
             promocode = promocode,
@@ -158,7 +158,6 @@ fun OrderDialog(
     var selectedOption by remember { mutableStateOf("") }
     Dialog(
         onDismissRequest = onDismissRequest,
-//        state = rememberDialogState(position = WindowPosition(Alignment.Center))
     ) {
         Card (
             shape = MaterialTheme.shapes.large,
@@ -175,8 +174,8 @@ fun OrderDialog(
                     .padding(dimensionResource(id = R.dimen.padding_medium))
             ) {
                 Text(
-                    text = "Для оформления заказа заполните следующие поля",
-                    style = MaterialTheme.typography.labelLarge, //todo
+                    text = stringResource(R.string.order_form_headline),
+                    style = MaterialTheme.typography.labelLarge,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_small))
@@ -185,7 +184,7 @@ fun OrderDialog(
                     value = name,
                     onValueChange = { name = it.capitalizeFirstLetter() },
                     label = {
-                        Text(text = "Ваше имя")
+                        Text(text = stringResource(R.string.your_name))
                     },
                     shape = MaterialTheme.shapes.small,
                     keyboardOptions = KeyboardOptions.Default.copy(
@@ -205,22 +204,24 @@ fun OrderDialog(
                         }
                                     },
                     label = {
-                        Text(text = "Номер телефона")
+                        Text(text = stringResource(R.string.phone_number))
                     },
                     prefix = {
                         Text(text = "+7")
                     },
                     shape = MaterialTheme.shapes.small,
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
                     ),
-                    modifier = Modifier.padding(
-                        bottom = dimensionResource(id = R.dimen.padding_small)
-                    )
+                    modifier = Modifier
+                        .padding(
+                            bottom = dimensionResource(id = R.dimen.padding_small)
+                        )
                         .fillMaxWidth()
                 )
                 Text(
-                    text = "Выберите способ связи",
+                    text = stringResource(R.string.choose_way_to_contact),
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.padding(
                         top = dimensionResource(id = R.dimen.padding_small)
@@ -243,11 +244,15 @@ fun OrderDialog(
                         Text(text = stringResource(R.string.comment_field))
                     },
                     shape = MaterialTheme.shapes.small,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    ),
                     minLines = 2,
                     maxLines = 2,
-                    modifier = Modifier.padding(
-                        bottom = dimensionResource(id = R.dimen.padding_small)
-                    )
+                    modifier = Modifier
+                        .padding(
+                            bottom = dimensionResource(id = R.dimen.padding_small)
+                        )
                         .fillMaxWidth()
                 )
                 Text(
@@ -266,7 +271,7 @@ fun OrderDialog(
                     )
                 )
                 Text(
-                    text = "Нажимая \"Подтвердить\" Вы соглашаетесь с обработкой персональных данных.", //todo
+                    text = stringResource(R.string.personal_data_agreement),
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
@@ -291,7 +296,7 @@ fun OrderDialog(
                             bottom = dimensionResource(id = R.dimen.padding_small)
                         )
                 ) {
-                    Text(text = "Подтвердить")
+                    Text(text = stringResource(R.string.accept))
                 }
                 OutlinedButton(
                     shape = MaterialTheme.shapes.small,
@@ -299,7 +304,7 @@ fun OrderDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    Text(text = "Назад")
+                    Text(text = stringResource(R.string.back))
                 }
             }
         }
@@ -369,7 +374,6 @@ fun OrderScreenPreview () {
             },
             onOrderButtonClicked = {a, b, c, d ->},
             onIncButton = {item ->
-//                onIncButton(item)
             },
             onPromocodeButtonClicked = {},
             isPromocodeFieldEnable = true,
@@ -377,7 +381,6 @@ fun OrderScreenPreview () {
             promocode = "",
             onPromocodeChanged = {},
             onDecButton = {item ->
-//                onDecButton(item)
             },
             discount = 1f
         )

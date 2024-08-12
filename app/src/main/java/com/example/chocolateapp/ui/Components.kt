@@ -54,7 +54,6 @@ fun ChocolateCard(
             ){
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-//                    verticalAlignment = Alignment.CenterVertically
 
                 ) {
                     Text(
@@ -94,22 +93,11 @@ fun FormCard(
                     .build(),
                 error = painterResource(R.drawable.error_chocolate),
                 placeholder = painterResource(R.drawable.default_chocolate),
-                contentDescription = "photo of chocolate", //todo
+                contentDescription = "photo of chocolate",
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .heightIn(max = dimensionResource(id = R.dimen.image_size))
                     .align(Alignment.CenterHorizontally))
-           /* if (form.imgSrc != null) {
-
-            } else {
-                Image(
-                    painter = painterResource(id = form.imageId),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .heightIn(max = dimensionResource(id = R.dimen.image_size))
-                )
-            }*/
             Row (
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -159,7 +147,7 @@ fun SetCard(
                     .build(),
                 error = painterResource(R.drawable.error_chocolate),
                 placeholder = painterResource(R.drawable.default_chocolate),
-                contentDescription = "photo of chocolate", //todo
+                contentDescription = stringResource(R.string.cd_photo, chocoSet.title),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .heightIn(max = dimensionResource(id = R.dimen.image_size))

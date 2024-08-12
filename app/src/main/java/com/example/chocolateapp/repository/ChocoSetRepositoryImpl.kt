@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.chocolateapp.data.dao.ChocoSetDao
 import com.example.chocolateapp.data.dao.FormEntityDao
 import com.example.chocolateapp.data.dao.FormInSetDao
-import com.example.chocolateapp.data.repository.ChocosetRepository
+import com.example.chocolateapp.data.repository.ChocoSetRepository
 import com.example.chocolateapp.model.ChocoSet
 import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.network.ChocolateApiService
@@ -14,22 +14,15 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
 
-class ChocosetRepositoryImpl (
+class ChocoSetRepositoryImpl (
     private val api: ChocolateApiService,
     private val setDao: ChocoSetDao,
     private val formInSetDao: FormInSetDao,
     private val formDao: FormEntityDao
-) : ChocosetRepository {
-    override suspend fun insertAllChocosets(chocosets: List<ChocoSet>) {
-        TODO("Not yet implemented")
-    }
+) : ChocoSetRepository {
 
-    override suspend fun insertChocoset(chocoset: ChocoSet) {
-        TODO("Not yet implemented")
-    }
-
-    private fun getChocosetFromDb(): List<ChocoSet> {
-        var result = mutableListOf<ChocoSet>()
+    private fun getChocoSetFromDb(): List<ChocoSet> {
+        val result = mutableListOf<ChocoSet>()
         setDao.getAllChocosets().forEach {set ->
             val formIds = formInSetDao.getFormsForSet(set.id)
             val forms = mutableListOf<ChocolateForm>()
@@ -43,12 +36,12 @@ class ChocosetRepositoryImpl (
             )
 
         }
-        setDao.getAllChocosets().map {chocosetEntity->
-            val formsId = formInSetDao.getFormsForSet(chocosetEntity.id)
+        setDao.getAllChocosets().map {chocoSetEntity->
+            val formsId = formInSetDao.getFormsForSet(chocoSetEntity.id)
             val chocolateFormsList = formDao.getAllFormsIn(formsId).map {
                 it.toForm().toChocolateForm()
             }
-            chocosetEntity.toChocoSet(
+            chocoSetEntity.toChocoSet(
                 forms = chocolateFormsList
             )
         }
@@ -56,10 +49,10 @@ class ChocosetRepositoryImpl (
         return result
     }
 
-    override fun getAllChocosets(): Flow<Resource<List<ChocoSet>>> = flow {
+    override fun getAllChocoSets(): Flow<Resource<List<ChocoSet>>> = flow {
         emit(Resource.Loading())
 
-        val storedChocoSets = getChocosetFromDb()
+        val storedChocoSets = getChocoSetFromDb()
 
         emit(Resource.Loading(
             data = storedChocoSets
@@ -68,7 +61,7 @@ class ChocosetRepositoryImpl (
         try {
             val remoteSets = api.getSets()
             val remoteFormInSet = api.getFormsInSets()
-            clearChocosets()
+            clearChocoSets()
             setDao.insertList(remoteSets)
             formInSetDao.insertList(remoteFormInSet)
         } catch (e: HttpException) {
@@ -84,17 +77,13 @@ class ChocosetRepositoryImpl (
             ))
             e.printStackTrace()
         }
-
-        val newChocoSets = getChocosetFromDb()
-
-        Log.d("govno", newChocoSets.toString())
-
+        val newChocoSets = getChocoSetFromDb()
         emit(Resource.Success(
             data = newChocoSets
         ))
     }
 
-    override fun clearChocosets() {
+    override fun clearChocoSets() {
         formInSetDao.clearTable()
         setDao.clearTable()
     }

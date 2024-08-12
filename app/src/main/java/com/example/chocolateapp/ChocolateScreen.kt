@@ -62,14 +62,12 @@ sealed class ChocolateScreen (
     @StringRes val resourceId: Int,
     @DrawableRes val iconId: Int
 ) {
-    //    object Taste: ChocolateScreen("taste", R.string.chocolate, R.drawable.ic_chocolate)
     data object Set: ChocolateScreen("sets",R.string.sets, R.drawable.ic_set)
     data object Forms: ChocolateScreen("forms",R.string.forms, R.drawable.ic_chocolate)
     data object Order: ChocolateScreen("order",R.string.order, R.drawable.ic_cart)
 }
 
 val screens = listOf(
-//    ChocolateScreen.Taste,
     ChocolateScreen.Forms,
     ChocolateScreen.Set,
     ChocolateScreen.Order
@@ -88,7 +86,6 @@ fun ChocolateBottomNavBar(
         val currentScreenRoute = currentDestination?.route
         items.forEach {screen ->
             val selected = currentScreenRoute == screen.route
-            // currentDestination?.hierarchy?.any { it.route == screen.route } == true
             BottomNavigationItem(
                 selected = selected,
                 onClick = {
@@ -137,22 +134,17 @@ fun ChocolateApp (
     viewModel: OrderViewModel = viewModel(factory = OrderViewModel.factory),
     navController: NavHostController = rememberNavController()
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-    val currentScreen = currentDestination?.route
-
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val SUCCESS_ADD_TO_CART = stringResource(id = R.string.snack_succesfully_added_to_cart)
-    val SUCCESS_REMOVE_FROM_CART = stringResource(id = R.string.snack_succesfully_removed_from_cart)
-    val SUCCESS_ORDER = stringResource(id = R.string.snack_succesfully_ordered)
-    val PROMOCODE_SUCCESS = stringResource(id = R.string.promocode_success)
+    val successAddToCart = stringResource(id = R.string.snack_succesfully_added_to_cart)
+    val successRemoveFromCart = stringResource(id = R.string.snack_succesfully_removed_from_cart)
+    val successOrder = stringResource(id = R.string.snack_succesfully_ordered)
+    val promocodeSuccess = stringResource(id = R.string.promocode_success)
     val promocodeFailMsg = stringResource(id = R.string.promocode_fail)
 
-    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<Orderable?>(null) }
-    var selectedChocolates = remember { mutableStateListOf<Chocolate?>(null)}
+    val selectedChocolates = remember { mutableStateListOf<Chocolate?>(null)}
 
     var showEditBottomSheet by remember { mutableStateOf(false) }
     var selectedEditItem by remember { mutableStateOf<ChocolateForm?>(null) }
@@ -174,7 +166,7 @@ fun ChocolateApp (
             )
         },
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackBarHostState)
         },
         modifier = Modifier
             .systemBarsPadding()
@@ -239,19 +231,18 @@ fun ChocolateApp (
                     onDeleteButtonClicked = { item: Orderable ->
                         viewModel.deleteItem(uiState.items.indexOf(item))
                         scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = SUCCESS_REMOVE_FROM_CART,
-//                            actionLabel = "ОК"
+                            snackBarHostState.showSnackbar(
+                                message = successRemoveFromCart,
+                                withDismissAction = true
                             )
                         }
                     },
                     onDeleteSubButtonClicked = { item: ChocoSet, form: ChocolateForm ->
                         viewModel.deleteSubItem(item, form)
                         scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = SUCCESS_REMOVE_FROM_CART,
+                            snackBarHostState.showSnackbar(
+                                message = successRemoveFromCart,
                                 withDismissAction = true,
-//                            actionLabel = "ОК"
                             )
                         }
                     },
@@ -261,12 +252,14 @@ fun ChocolateApp (
                             viewModel.clearOrder()
                             if (code in (200..201)) {
                                 scope.launch {
-                                    snackbarHostState.showSnackbar(
+                                    snackBarHostState.showSnackbar(
                                         withDismissAction = true,
-                                        message = SUCCESS_ORDER,
-//                            actionLabel = "ОК"
+                                        message = successOrder,
                                     )
                                 }
+                                promocodeFieldEnabled = true
+                                promocodeButtonEnabled = true
+                                promocode = ""
                             }
                         }
                     },
@@ -277,15 +270,15 @@ fun ChocolateApp (
                     },
                     onPromocodeButtonClicked = {
                         scope.launch{
-                            var msg: String
+                            val msg: String
                             if (viewModel.applyPromocode(promocode)) {
-                                msg = PROMOCODE_SUCCESS
+                                msg = promocodeSuccess
                                 promocodeFieldEnabled = false
                                 promocodeButtonEnabled = false
                             } else {
                                 msg = promocodeFailMsg
                             }
-                            snackbarHostState.showSnackbar(
+                            snackBarHostState.showSnackbar(
                                 message = msg,
                                 withDismissAction = true
                             )
@@ -320,13 +313,12 @@ fun ChocolateApp (
                             (selectedItem as? ChocoSet)?.updateChocolates(selectedChocolates)
                         }
                         val copyItem = selectedItem!!.clone()
-//                        viewModel.addItem(selectedItem!!)
                         viewModel.addItem(copyItem as Orderable)
                     }
 
                     scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = SUCCESS_ADD_TO_CART,
+                        snackBarHostState.showSnackbar(
+                            message = successAddToCart,
                             withDismissAction = true,
                         )
                     }
@@ -342,13 +334,14 @@ fun ChocolateApp (
                 tastes = uiState.chocolates,
                 buttonTextId = R.string.change,
                 onDismissRequest = { showEditBottomSheet = false },
-                onChipClicked = { chocolate, form ->
+                onChipClicked = { chocolate, _ ->
                     selectedEditTaste = chocolate
                 },
                 onButtonClicked = {
                     if (selectedEditItem != null) {
                         if (selectedChocoSet != null) {
                             selectedChocoSet?.updateSubItem(selectedEditItem!!, selectedEditTaste!!)
+                            viewModel.setChocolate(selectedEditItem!!, selectedEditTaste!!)
                         } else {
                             selectedEditItem?.updateChocolate(selectedEditTaste)
                             viewModel.setChocolate(selectedEditItem!!, selectedEditTaste!!)
@@ -367,14 +360,3 @@ fun ChocolateApp (
 fun ChocolateAppPreview() {
     ChocolateApp()
 }
-
-fun selectItem(item: Orderable) {
-
-}
-
-
-/*items = listOf(
-                        Datasource.chocoSets[0],
-                        ChocolateForm(chocolate = Datasource.tastes[0], form = Datasource.forms[2]),
-                        ChocolateForm(chocolate = Datasource.tastes[0], form = Datasource.forms[1])
-                    )*/

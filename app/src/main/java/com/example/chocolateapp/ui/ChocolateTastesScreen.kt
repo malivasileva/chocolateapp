@@ -24,10 +24,10 @@ fun ChocolateTastesScreen (
         modifier = modifier
     ){
         items (chocolates) {
-            val padding_small = dimensionResource(id = R.dimen.padding_small)
+            val paddingSmall = dimensionResource(id = R.dimen.padding_small)
             ChocolateCard(
                 chocolate = it,
-                modifier = Modifier.padding(padding_small)
+                modifier = Modifier.padding(paddingSmall)
             )
         }
     }
