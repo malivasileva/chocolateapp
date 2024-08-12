@@ -6,19 +6,6 @@ import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.model.Form
 
-/*object FormTable : IdTable<UUID> ("forms") {
-    override val id = uuid("id").entityId()
-    val title = varchar("title", 512).nullable()
-    val weight = integer("weight")
-}*/
-
-//object ChocoFormTable : IdTable<UUID>("Choco")
-
-/*object ChocoSetTable : IdTable<UUID> ("choco_sets") {
-    override val id = uuid("id").entityId()
-    val formsId = reference()
-}*/
-
 object Datasource {
     val contactWays = listOf(
         "Telegram", "Viber", "WhatsUp", "По телефону"
@@ -26,22 +13,22 @@ object Datasource {
 
 
     val tastes = listOf(
-        Chocolate(title = "Молочный", price = 300, description = "Молочный шоколад", imageId = R.drawable.milk_chocolate),
-        Chocolate(title = "Белый", price = 200, description = "Белый шоколад", imageId = R.drawable.white_chocolate),
-        Chocolate(title = "Горький", price = 400, description = "Горький шоколад", imageId = R.drawable.dark_chocolate),
-        Chocolate(title = "Кофейный", price = 400, description = "Кофейный шоколад", imageId = R.drawable.coffee_chocolate),
-        Chocolate(title = "Карамельный", price = 400, description = "Карамельный шоколад", imageId = R.drawable.caramel_chocolate),
+        Chocolate(title = "Молочный", price = 300, description = "Молочный шоколад", imageId = R.drawable.default_chocolate),
+        Chocolate(title = "Белый", price = 200, description = "Белый шоколад", imageId = R.drawable.default_chocolate),
+        Chocolate(title = "Горький", price = 400, description = "Горький шоколад", imageId = R.drawable.default_chocolate),
+        Chocolate(title = "Кофейный", price = 400, description = "Кофейный шоколад", imageId = R.drawable.default_chocolate),
+        Chocolate(title = "Карамельный", price = 400, description = "Карамельный шоколад", imageId = R.drawable.default_chocolate),
     )
 
     val forms = listOf(
-        Form(title = "Слиток", weight = 1000, imageId = R.drawable.ingot, imgSrc = ""),
-        Form(title = "Плитка", weight = 100, imageId = R.drawable.bar, imgSrc = "https://choco38.ru/img/bar.jpg"),
-        Form(title = "Рыба 1", weight = 20, imageId = R.drawable.fish, imgSrc = ""),
-        Form(title = "Лодка", weight = 40, imageId = R.drawable.boat, imgSrc = ""),
-        Form(title = "Рыба 2", weight = 15, imageId = R.drawable.fish2, imgSrc = ""),
-        Form(title = "Поезд 1", weight = 35, imageId = R.drawable.train1, imgSrc = ""),
-        Form(title = "Поезд 2", weight = 35, imageId = R.drawable.train2, imgSrc = ""),
-        Form(title = "Поезд 3", weight = 35, imageId = R.drawable.train3, imgSrc = ""),
+        Form(title = "Слиток", weight = 1000, imageId = R.drawable.default_chocolate, imgSrc = ""),
+        Form(title = "Плитка", weight = 100, imageId = R.drawable.default_chocolate, imgSrc = "https://choco38.ru/img/bar.jpg"),
+        Form(title = "Рыба 1", weight = 20, imageId = R.drawable.default_chocolate, imgSrc = ""),
+        Form(title = "Лодка", weight = 40, imageId = R.drawable.default_chocolate, imgSrc = ""),
+        Form(title = "Рыба 2", weight = 15, imageId = R.drawable.default_chocolate, imgSrc = ""),
+        Form(title = "Поезд 1", weight = 35, imageId = R.drawable.default_chocolate, imgSrc = ""),
+        Form(title = "Поезд 2", weight = 35, imageId = R.drawable.default_chocolate, imgSrc = ""),
+        Form(title = "Поезд 3", weight = 35, imageId = R.drawable.default_chocolate, imgSrc = ""),
     )
 
     val chocoSets = listOf(
@@ -51,7 +38,7 @@ object Datasource {
                 ChocolateForm( _chocolate = null, form = forms[2], imgSrc = "", id = -1),
                 ChocolateForm( _chocolate = null, form = forms[3], imgSrc = "", id = -1),
                 ChocolateForm( _chocolate = null, form = forms[4], imgSrc = "", id = -1),),
-            imageId = R.drawable.set_fishman1,
+            imageId = R.drawable.default_chocolate,
             imgSrc = ""
         ),
         ChocoSet(
@@ -60,7 +47,7 @@ object Datasource {
                 ChocolateForm( _chocolate = null, form = forms[2], imgSrc = "", id = -1),
                 ChocolateForm( _chocolate = null, form = forms[3], imgSrc = "", id = -1),
                 ChocolateForm( _chocolate = null, form = forms[4], imgSrc = "", id = -1),),
-            imageId = R.drawable.set_fishman2,
+            imageId = R.drawable.default_chocolate,
             imgSrc = ""
         ),
         ChocoSet(
@@ -69,7 +56,7 @@ object Datasource {
                 ChocolateForm( _chocolate = null, form = forms[2], imgSrc = "", id = -1),
                 ChocolateForm( _chocolate = null, form = forms[3], imgSrc = "", id = -1),
                 ChocolateForm( _chocolate = null, form = forms[4], imgSrc = "", id = -1),),
-            imageId = R.drawable.set_fishman3,
+            imageId = R.drawable.default_chocolate,
             imgSrc = ""
         ),
         ChocoSet(
@@ -78,7 +65,7 @@ object Datasource {
                 ChocolateForm( _chocolate = tastes[2], form = forms[5], imgSrc = "", id = -1),
                 ChocolateForm( _chocolate = tastes[2], form = forms[6], imgSrc = "", id = -1),
                 ChocolateForm( _chocolate = tastes[2], form = forms[7], imgSrc = "", id = -1)),
-            imageId = R.drawable.set_trains,
+            imageId = R.drawable.default_chocolate,
             imgSrc = ""
         ),
     )
