@@ -20,6 +20,11 @@ import com.example.chocolateapp.model.Form
 }*/
 
 object Datasource {
+    val contactWays = listOf(
+        "Telegram", "Viber", "WhatsUp", "По телефону"
+    )
+
+
     val tastes = listOf(
         Chocolate(title = "Молочный", price = 300, description = "Молочный шоколад", imageId = R.drawable.milk_chocolate),
         Chocolate(title = "Белый", price = 200, description = "Белый шоколад", imageId = R.drawable.white_chocolate),
@@ -43,36 +48,36 @@ object Datasource {
         ChocoSet(
             title = "Рыбаку 1",
             forms = mutableListOf(
-                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = ""),
-                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = ""),
-                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = ""),),
+                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = "", id = -1),
+                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = "", id = -1),
+                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = "", id = -1),),
             imageId = R.drawable.set_fishman1,
             imgSrc = ""
         ),
         ChocoSet(
             title = "Рыбаку 2",
             forms = mutableListOf(
-                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = ""),
-                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = ""),
-                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = ""),),
+                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = "", id = -1),
+                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = "", id = -1),
+                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = "", id = -1),),
             imageId = R.drawable.set_fishman2,
             imgSrc = ""
         ),
         ChocoSet(
             title = "Рыбаку 3",
             forms = mutableListOf(
-                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = ""),
-                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = ""),
-                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = ""),),
+                ChocolateForm( _chocolate = null, form = forms[2], imgSrc = "", id = -1),
+                ChocolateForm( _chocolate = null, form = forms[3], imgSrc = "", id = -1),
+                ChocolateForm( _chocolate = null, form = forms[4], imgSrc = "", id = -1),),
             imageId = R.drawable.set_fishman3,
             imgSrc = ""
         ),
         ChocoSet(
             title = "Железная дорога",
             forms = mutableListOf(
-                ChocolateForm( _chocolate = tastes[2], form = forms[5], imgSrc = ""),
-                ChocolateForm( _chocolate = tastes[2], form = forms[6], imgSrc = ""),
-                ChocolateForm( _chocolate = tastes[2], form = forms[7], imgSrc = "")),
+                ChocolateForm( _chocolate = tastes[2], form = forms[5], imgSrc = "", id = -1),
+                ChocolateForm( _chocolate = tastes[2], form = forms[6], imgSrc = "", id = -1),
+                ChocolateForm( _chocolate = tastes[2], form = forms[7], imgSrc = "", id = -1)),
             imageId = R.drawable.set_trains,
             imgSrc = ""
         ),
@@ -80,7 +85,7 @@ object Datasource {
 
     val testOrder = listOf(
         chocoSets[0],
-        ChocolateForm(_chocolate = tastes[0], form = forms[2], imgSrc = ""),
-        ChocolateForm(_chocolate = tastes[0], form = forms[1], imgSrc = "")
+        ChocolateForm(_chocolate = tastes[0], form = forms[2], imgSrc = "", id = -1),
+        ChocolateForm(_chocolate = tastes[0], form = forms[1], imgSrc = "", id = -1)
     )
 }

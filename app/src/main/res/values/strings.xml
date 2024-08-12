@@ -6,9 +6,10 @@
     <string name="order">Заказ</string>
     <string name="price_grams">%s ₽/100 гр </string>
     <string name="weight">%s гр </string>
+    <string name="total_weight">Вес: %s гр </string>
     <string name="price">%s  ₽</string>
     <string name="add_to_cart">Добавить</string>
-    <string name="total_price">Стоимость: %s ₽</string>
+    <string name="total_price">Итого: %s ₽</string>
     <string name="order_items">Заказать</string>
     <string name="delete_from_cart">Удалить из корзины</string>
     <string name="nothing_choosed">Ничего не выбрано</string>
@@ -16,4 +17,11 @@
     <string name="snack_succesfully_added_to_cart">Товар добавлен в корзину!</string>
     <string name="snack_succesfully_removed_from_cart">Товар успешно удален</string>
     <string name="snack_succesfully_ordered">Заказ успешно оформлен!</string>
+    <string name="comment_field">Комментарий к заказу</string>
+    <string name="cd_set_photo">Изображение набора %1$s</string>
+    <string name="promocode_success">Промокод успешно применен</string>
+    <string name="promocode_fail">Промокод недействителен</string>
+    <string name="apply">Применить</string>
+    <string name="increase_by_one">Увеличить количество на 1</string>
+    <string name="decrease_by_one">Уменьшить количество на 1</string>
 </resources>

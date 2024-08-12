@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import com.example.chocolateapp.R
 
 data class ChocoSet(
-    val id: Int = -1,
+    override val id: Int = -1,
     override val title: String,
     var forms: MutableList<ChocolateForm>,
     override var amount: Int = 1,

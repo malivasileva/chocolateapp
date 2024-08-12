@@ -4,10 +4,12 @@ import android.content.Context
 import com.example.chocolateapp.data.repository.ChocolateRepository
 import com.example.chocolateapp.data.repository.ChocosetRepository
 import com.example.chocolateapp.data.repository.FormRepository
+import com.example.chocolateapp.data.repository.OrderRepository
 import com.example.chocolateapp.network.ChocolateApiService
 import com.example.chocolateapp.repository.ChocolateRepositoryImpl
 import com.example.chocolateapp.repository.ChocosetRepositoryImpl
 import com.example.chocolateapp.repository.FormRepositoryImpl
+import com.example.chocolateapp.repository.OrderRepositoryImpl
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -17,6 +19,7 @@ interface AppContainer  {
     val chocolateRepository : ChocolateRepository
     val formRepository : FormRepository
     val setRepository : ChocosetRepository
+    val orderRepository : OrderRepository
 }
 
 class AppDataContainer (private val context: Context) : AppContainer {
@@ -50,6 +53,12 @@ class AppDataContainer (private val context: Context) : AppContainer {
             ChocolateDatabase.getDatabase(context).chocosetDao(),
             ChocolateDatabase.getDatabase(context).formInSetDao(),
             ChocolateDatabase.getDatabase(context).formDao(),
+        )
+    }
+
+    override val orderRepository: OrderRepository by lazy {
+        OrderRepositoryImpl(
+            retrofitService
         )
     }
 }

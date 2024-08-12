@@ -12,6 +12,7 @@ data class Form (
 ) {
     fun toChocolateForm() : ChocolateForm {
         return ChocolateForm(
+            id = id,
             form = this,
             imgSrc = imgSrc ?: ""
         )

@@ -20,6 +20,9 @@ interface FormEntityDao {
     @Query("SELECT * FROM form WHERE id in (:idList)")
     fun getAllFormsIn(idList: List<Int>) : List<FormEntity>
 
+    @Query("SELECT * FROM form WHERE id = :id")
+    fun getForm(id: Int) : FormEntity
+
     @Query("DELETE FROM form")
     fun clearForms()
 }

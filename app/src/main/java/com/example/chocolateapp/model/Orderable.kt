@@ -1,6 +1,7 @@
 package com.example.chocolateapp.model
 
 interface Orderable : Cloneable {
+    val id: Int
     val title: String
     var _price: Int
     val weight: Int

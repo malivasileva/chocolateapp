@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -18,6 +19,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -76,6 +79,7 @@ fun TasteBottomSheet (
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
             ) {
                 if (item is ChocolateForm) {
                     selectedChocolates.add(null)
@@ -106,6 +110,7 @@ fun TasteBottomSheet (
                         tastes = tastes,
                         selectedChocolates = selectedChocolates,
                         onChipClicked = { chocolate, index ->
+                            Log.d("govno1", "$chocolate , $index")
                             onChipClicked(chocolate, index)
                             selectedChocolates[index] = chocolate
                             if (selectedChocolates.all { it != null })
@@ -179,7 +184,8 @@ fun ChocoSetItem (
                 tastes = tastes,
                 selectedChocolate = selectedChocolate,
                 onChipClicked = { chocolate ->
-                    onChipClicked(chocolate, chocoSet.forms.indexOf(form))
+                    Log.d("govno2", "${chocoSet.forms}")
+                    onChipClicked(chocolate, chocoSet.forms.indexOfFirst { it === form })
                 },
                 modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_medium),
                     end = dimensionResource(id = R.dimen.padding_small),

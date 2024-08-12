@@ -1,8 +1,10 @@
 package com.example.chocolateapp.model
 
 data class ChocolateForm (
+    override val id: Int,
     private var _chocolate: Chocolate? = null,
     val form: Form,
+    val isChocoset: Boolean = false,
     override val imageId: Int = form.imageId,
     override val imgSrc: String,
     override val title: String = form.title,
@@ -45,5 +47,14 @@ data class ChocolateForm (
             return true
         }
         else return false
+    }
+
+    fun toJsonOrderItem() : JsonOrderItem {
+        return JsonOrderItem(
+            formId = id,
+            chocolateId = chocolate?.id!!,
+            chocoset = isChocoset,
+            count = amount
+        )
     }
 }

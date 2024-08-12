@@ -21,7 +21,7 @@ import com.example.chocolateapp.data.entity.Order
 @Database(entities = [ChocolateEntity::class,
     FormEntity::class, ChocoSetEntity::class,
     FormInSet::class, Order::class, ItemInOrder::class],
-    version = 7,
+    version = 8,
     exportSchema = false)
 abstract class ChocolateDatabase : RoomDatabase() {
     abstract fun chocolateDao() : ChocolateDao

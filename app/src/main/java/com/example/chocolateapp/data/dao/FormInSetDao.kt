@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.chocolateapp.data.entity.FormInSet
-import com.example.chocolateapp.data.entity.ItemInOrder
 
 @Dao
 interface FormInSetDao {
@@ -19,5 +18,5 @@ interface FormInSetDao {
     fun clearTable()
 
     @Query("SELECT form_id FROM form_in_set WHERE set_id = :orderId")
-    fun getItemsForOrder(orderId: Int) : List<Int>
+    fun getFormsForSet(orderId: Int) : List<Int>
 }

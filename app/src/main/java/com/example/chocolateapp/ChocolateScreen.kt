@@ -1,6 +1,5 @@
 package com.example.chocolateapp
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.tween
@@ -46,7 +45,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.chocolateapp.data.Datasource
 import com.example.chocolateapp.model.ChocoSet
 import com.example.chocolateapp.model.Chocolate
 import com.example.chocolateapp.model.ChocolateForm
@@ -148,6 +146,8 @@ fun ChocolateApp (
     val SUCCESS_ADD_TO_CART = stringResource(id = R.string.snack_succesfully_added_to_cart)
     val SUCCESS_REMOVE_FROM_CART = stringResource(id = R.string.snack_succesfully_removed_from_cart)
     val SUCCESS_ORDER = stringResource(id = R.string.snack_succesfully_ordered)
+    val PROMOCODE_SUCCESS = stringResource(id = R.string.promocode_success)
+    val promocodeFailMsg = stringResource(id = R.string.promocode_fail)
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -158,6 +158,10 @@ fun ChocolateApp (
     var selectedEditItem by remember { mutableStateOf<ChocolateForm?>(null) }
     var selectedChocoSet by remember { mutableStateOf<ChocoSet?>(null) }
     var selectedEditTaste by remember { mutableStateOf<Chocolate?>(null)}
+
+    var promocodeFieldEnabled by remember { mutableStateOf(true) }
+    var promocodeButtonEnabled by remember { mutableStateOf(true) }
+    var promocode by remember { mutableStateOf("")}
 
     Scaffold (
         topBar = {
@@ -246,22 +250,52 @@ fun ChocolateApp (
                         scope.launch {
                             snackbarHostState.showSnackbar(
                                 message = SUCCESS_REMOVE_FROM_CART,
+                                withDismissAction = true,
 //                            actionLabel = "ОК"
                             )
                         }
                     },
-                    onOrderButtonClicked = {
-                        viewModel.clearOrder()
+                    onOrderButtonClicked = { name: String, phone: String, comment: String, type: String ->
                         scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = SUCCESS_ORDER,
+                            val code = viewModel.sendOrder(name, phone, comment, type)
+                            viewModel.clearOrder()
+                            if (code in (200..201)) {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        withDismissAction = true,
+                                        message = SUCCESS_ORDER,
 //                            actionLabel = "ОК"
-                            )
+                                    )
+                                }
+                            }
                         }
                     },
                     totalPrice = uiState.totalPrice,
+                    discount = uiState.discount,
                     onIncButton = {item ->
                         viewModel.increaseAmount(item)
+                    },
+                    onPromocodeButtonClicked = {
+                        scope.launch{
+                            var msg: String
+                            if (viewModel.applyPromocode(promocode)) {
+                                msg = PROMOCODE_SUCCESS
+                                promocodeFieldEnabled = false
+                                promocodeButtonEnabled = false
+                            } else {
+                                msg = promocodeFailMsg
+                            }
+                            snackbarHostState.showSnackbar(
+                                message = msg,
+                                withDismissAction = true
+                            )
+                        }
+                    },
+                    isPromocodeFieldEnable = promocodeFieldEnabled,
+                    isPromocodeButtonEnable = promocodeButtonEnabled,
+                    promocode = promocode,
+                    onPromocodeChanged = {
+                        promocode = it
                     },
                     onDecButton = {item ->
                         viewModel.decreaseAmount(item)
@@ -273,13 +307,12 @@ fun ChocolateApp (
         if (showBottomSheet) {
             TasteBottomSheet(
                 item = selectedItem,
-//                tastes = Datasource.tastes,
                 tastes = uiState.chocolates,
                 buttonTextId = R.string.add_to_cart,
                 onDismissRequest = { showBottomSheet = false },
                 onChipClicked = { chocolate: Chocolate, index: Int ->
                     selectedChocolates[index] = chocolate
-                }, //todo
+                },
                 onButtonClicked = {
                     if (selectedItem != null) {
                         if (selectedItem is ChocolateForm) (selectedItem as? ChocolateForm)?.updateChocolate(selectedChocolates.first())
@@ -294,12 +327,12 @@ fun ChocolateApp (
                     scope.launch {
                         snackbarHostState.showSnackbar(
                             message = SUCCESS_ADD_TO_CART,
-//                            actionLabel = "ОК"
+                            withDismissAction = true,
                         )
                     }
                     showBottomSheet = false
 
-                }, //todo add to cart and snackbar
+                },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -311,7 +344,7 @@ fun ChocolateApp (
                 onDismissRequest = { showEditBottomSheet = false },
                 onChipClicked = { chocolate, form ->
                     selectedEditTaste = chocolate
-                }, //todo
+                },
                 onButtonClicked = {
                     if (selectedEditItem != null) {
                         if (selectedChocoSet != null) {
@@ -322,7 +355,7 @@ fun ChocolateApp (
                         }
                         showEditBottomSheet = false
                     }
-                }, //todo add to cart and snackbar
+                },
                 modifier = Modifier.fillMaxWidth()
             )
         }

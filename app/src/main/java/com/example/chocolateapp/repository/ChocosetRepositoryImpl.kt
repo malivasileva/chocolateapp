@@ -1,11 +1,12 @@
 package com.example.chocolateapp.repository
 
+import android.util.Log
 import com.example.chocolateapp.data.dao.ChocoSetDao
 import com.example.chocolateapp.data.dao.FormEntityDao
 import com.example.chocolateapp.data.dao.FormInSetDao
-import com.example.chocolateapp.data.entity.ChocoSetEntity
 import com.example.chocolateapp.data.repository.ChocosetRepository
 import com.example.chocolateapp.model.ChocoSet
+import com.example.chocolateapp.model.ChocolateForm
 import com.example.chocolateapp.network.ChocolateApiService
 import com.example.chocolateapp.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -28,8 +29,22 @@ class ChocosetRepositoryImpl (
     }
 
     private fun getChocosetFromDb(): List<ChocoSet> {
-        return setDao.getAllChocosets().map {chocosetEntity->
-            val formsId = formInSetDao.getItemsForOrder(chocosetEntity.id)
+        var result = mutableListOf<ChocoSet>()
+        setDao.getAllChocosets().forEach {set ->
+            val formIds = formInSetDao.getFormsForSet(set.id)
+            val forms = mutableListOf<ChocolateForm>()
+            formIds.forEach {
+                forms.add(formDao.getForm(it).toForm().toChocolateForm())
+            }
+            result.add(
+                set.toChocoSet(
+                    forms = forms
+                )
+            )
+
+        }
+        setDao.getAllChocosets().map {chocosetEntity->
+            val formsId = formInSetDao.getFormsForSet(chocosetEntity.id)
             val chocolateFormsList = formDao.getAllFormsIn(formsId).map {
                 it.toForm().toChocolateForm()
             }
@@ -37,6 +52,8 @@ class ChocosetRepositoryImpl (
                 forms = chocolateFormsList
             )
         }
+
+        return result
     }
 
     override fun getAllChocosets(): Flow<Resource<List<ChocoSet>>> = flow {
@@ -69,6 +86,8 @@ class ChocosetRepositoryImpl (
         }
 
         val newChocoSets = getChocosetFromDb()
+
+        Log.d("govno", newChocoSets.toString())
 
         emit(Resource.Success(
             data = newChocoSets
