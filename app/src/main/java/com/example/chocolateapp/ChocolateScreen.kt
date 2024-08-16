@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2024 Maria Vasileva
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.example.chocolateapp
 
 import androidx.annotation.DrawableRes
@@ -38,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationCompat.MessagingStyle.Message
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -54,6 +72,7 @@ import com.example.chocolateapp.ui.FormsScreen
 import com.example.chocolateapp.ui.OrderScreen
 import com.example.chocolateapp.ui.OrderViewModel
 import com.example.chocolateapp.ui.TasteBottomSheet
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
@@ -136,6 +155,7 @@ fun ChocolateApp (
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var snackBarJob: Job? by remember { mutableStateOf(null) }
     val successAddToCart = stringResource(id = R.string.snack_succesfully_added_to_cart)
     val successRemoveFromCart = stringResource(id = R.string.snack_succesfully_removed_from_cart)
     val successOrder = stringResource(id = R.string.snack_succesfully_ordered)
@@ -154,6 +174,16 @@ fun ChocolateApp (
     var promocodeFieldEnabled by remember { mutableStateOf(true) }
     var promocodeButtonEnabled by remember { mutableStateOf(true) }
     var promocode by remember { mutableStateOf("")}
+
+    fun showSnackBar(message: String) {
+        snackBarJob?.cancel()
+        snackBarJob = scope.launch {
+            snackBarHostState.showSnackbar(
+                message = message,
+                withDismissAction = true
+            )
+        }
+    }
 
     Scaffold (
         topBar = {
@@ -230,33 +260,18 @@ fun ChocolateApp (
                     },
                     onDeleteButtonClicked = { item: Orderable ->
                         viewModel.deleteItem(uiState.items.indexOf(item))
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = successRemoveFromCart,
-                                withDismissAction = true
-                            )
-                        }
+                        showSnackBar(successRemoveFromCart)
                     },
                     onDeleteSubButtonClicked = { item: ChocoSet, form: ChocolateForm ->
                         viewModel.deleteSubItem(item, form)
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = successRemoveFromCart,
-                                withDismissAction = true,
-                            )
-                        }
+                        showSnackBar(successRemoveFromCart)
                     },
                     onOrderButtonClicked = { name: String, phone: String, comment: String, type: String ->
                         scope.launch {
                             val code = viewModel.sendOrder(name, phone, comment, type)
                             viewModel.clearOrder()
                             if (code in (200..201)) {
-                                scope.launch {
-                                    snackBarHostState.showSnackbar(
-                                        withDismissAction = true,
-                                        message = successOrder,
-                                    )
-                                }
+                                showSnackBar(successOrder)
                                 promocodeFieldEnabled = true
                                 promocodeButtonEnabled = true
                                 promocode = ""
@@ -278,10 +293,7 @@ fun ChocolateApp (
                             } else {
                                 msg = promocodeFailMsg
                             }
-                            snackBarHostState.showSnackbar(
-                                message = msg,
-                                withDismissAction = true
-                            )
+                            showSnackBar(msg)
                         }
                     },
                     isPromocodeFieldEnable = promocodeFieldEnabled,
@@ -316,12 +328,8 @@ fun ChocolateApp (
                         viewModel.addItem(copyItem as Orderable)
                     }
 
-                    scope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = successAddToCart,
-                            withDismissAction = true,
-                        )
-                    }
+
+                    showSnackBar(successAddToCart)
                     showBottomSheet = false
 
                 },
@@ -353,7 +361,10 @@ fun ChocolateApp (
             )
         }
     }
+
 }
+
+
 
 @Preview
 @Composable
